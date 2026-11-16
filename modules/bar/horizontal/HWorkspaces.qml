@@ -23,6 +23,11 @@ StyledRect {
     readonly property int shown: Math.max(1, Config.bar.workspaces.shown)
     readonly property int cell: Tokens.sizes.bar.innerWidth - Tokens.padding.small
     readonly property int pad: Tokens.padding.extraSmall
+    // Collapsed: only the focused workspace is shown; hovering the pill expands it to all of them
+    readonly property bool expanded: hover.hovered
+    // One animated value drives every cell width, the gaps and the fades, so the pill, the cells and
+    // the window title next to it all move together (separate animations on each made them lag and overlap)
+    property real progress: expanded ? 1 : 0
     readonly property bool onSpecial: (monitor?.lastIpcObject.specialWorkspace?.name ?? "") !== ""
 
     readonly property var wsIds: {
@@ -52,6 +57,10 @@ StyledRect {
     }
 
     implicitWidth: row.implicitWidth + pad * 2
+
+    HoverHandler {
+        id: hover
+    }
     implicitHeight: Tokens.sizes.bar.innerWidth
 
     color: "transparent"
@@ -59,8 +68,10 @@ StyledRect {
 
     opacity: onSpecial ? 0.5 : 1
 
-    Behavior on implicitWidth {
-        Anim {}
+    Behavior on progress {
+        Anim {
+            type: Anim.Standard
+        }
     }
 
     Behavior on opacity {
@@ -79,11 +90,16 @@ StyledRect {
         radius: Tokens.rounding.full
         color: Colours.palette.m3primary
 
+        // Slides to the new workspace, but not while the pill is expanding or collapsing
         Behavior on x {
+            enabled: root.progress === 0 || root.progress === 1
+
             Anim {}
         }
 
         Behavior on width {
+            enabled: root.progress === 0 || root.progress === 1
+
             Anim {}
         }
     }
@@ -93,7 +109,7 @@ StyledRect {
 
         x: root.pad
         anchors.verticalCenter: parent.verticalCenter
-        spacing: Tokens.spacing.extraSmall
+        spacing: Tokens.spacing.extraSmall * root.progress
 
         Repeater {
             id: repeater
@@ -127,7 +143,7 @@ StyledRect {
                     return Colours.layer(Colours.palette.m3outlineVariant, 2);
                 }
                 readonly property string iconName: Icons.matchIconRuleList(Hypr.trimWsName(wsObj?.name ?? ""), GlobalConfig.bar.workspaces.workspaceIcons)
-                readonly property bool hasWindows: occupied && Config.bar.workspaces.showWindows && Config.bar.workspaces.maxWindowIcons > 0
+                readonly property bool hasWindows: false // window icons are not shown in the bar
 
                 readonly property string label: {
                     if (focused && Config.bar.workspaces.activeLabel)
@@ -146,12 +162,10 @@ StyledRect {
                     return String(name);
                 }
 
-                width: root.cell + (hasWindows ? windowRow.implicitWidth + Tokens.spacing.extraSmall : 0)
+                width: focused ? root.cell : root.cell * root.progress
                 height: root.height - root.pad * 2
-
-                Behavior on width {
-                    Anim {}
-                }
+                opacity: focused ? 1 : root.progress
+                clip: true
 
                 // Occupied background, shown behind workspaces that have windows
                 StyledRect {
@@ -243,6 +257,8 @@ StyledRect {
     MouseArea {
         anchors.fill: parent
         onClicked: event => {
+            if (!root.expanded)
+                return;
             const px = event.x - root.pad;
             for (let i = 0; i < repeater.count; i++) {
                 const it = repeater.itemAt(i);

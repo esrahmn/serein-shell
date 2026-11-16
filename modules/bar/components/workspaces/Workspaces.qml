@@ -126,7 +126,7 @@ StyledClippingRect {
                 monitor: root.monitor
 
                 displayType: Config.bar.workspaces.displayType
-                showWindows: Config.bar.workspaces.showWindows
+                showWindows: false // window icons are not shown in the bar
                 iconRules: GlobalConfig.bar.workspaces.workspaceIcons
                 activeLabel: Config.bar.workspaces.activeLabel
                 occupiedLabel: Config.bar.workspaces.occupiedLabel

@@ -91,7 +91,10 @@ Singleton {
             rule = "keyword layerrule %1 %2, match:namespace serein-drawers";
             trEnabled = transparency.enabled ? 1 : 0;
         }
-        Hypr.extras.batchMessage([rule.arg("blur").arg(trEnabled), rule.arg("ignore_alpha").arg(Math.max(0, transparency.base - 0.03))]);
+        // The surface alpha is applied twice (item opacity and colour), so blur must start below alpha squared
+        // or Hyprland would skip blurring the bar and panels as soon as the opacity slider goes down.
+        const surfaceAlpha = UiPrefs.surfaceOpacity * UiPrefs.surfaceOpacity;
+        Hypr.extras.batchMessage([rule.arg("blur").arg(trEnabled), rule.arg("ignore_alpha").arg(Math.max(0, surfaceAlpha - 0.05))]);
     }
 
     function requestReloadHyprRules(): void {
@@ -111,6 +114,14 @@ Singleton {
         }
 
         target: Hypr
+    }
+
+    Connections {
+        function onSurfaceOpacityChanged(): void {
+            root.requestReloadHyprRules();
+        }
+
+        target: UiPrefs
     }
 
     FileView {

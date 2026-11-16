@@ -240,6 +240,7 @@ Item {
                 checked: Nmcli.wifiEnabled
                 activeShape: MaterialShape.Cookie9Sided
                 onClicked: Nmcli.toggleWifi()
+                onRightClicked: root.popouts.currentName = "network" // network list
             }
 
             ShapeTile {
@@ -248,6 +249,7 @@ Item {
                 sub: !Bluetooth.defaultAdapter?.enabled ? Tr.tr("Off") : (root.connectedBt.length > 0 ? root.connectedBt[0].name : Tr.tr("On")) // qmllint disable unresolved-type
                 checked: Bluetooth.defaultAdapter?.enabled ?? false // qmllint disable unresolved-type
                 activeShape: MaterialShape.Clover4Leaf
+                onRightClicked: root.popouts.currentName = "bluetooth" // device list
                 onClicked: {
                     const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
                     if (adapter)
@@ -543,6 +545,7 @@ Item {
         property int activeShape: MaterialShape.Cookie9Sided
 
         signal clicked
+        signal rightClicked
 
         width: (parent.width - root.tileGap * 2) / 3
         height: 120
@@ -605,8 +608,9 @@ Item {
 
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             cursorShape: Qt.PointingHandCursor
-            onClicked: tile.clicked()
+            onClicked: event => event.button === Qt.RightButton ? tile.rightClicked() : tile.clicked()
         }
     }
 }

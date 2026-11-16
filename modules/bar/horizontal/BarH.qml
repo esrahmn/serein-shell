@@ -31,12 +31,8 @@ RowLayout {
         }
     }
 
-    function toggleControlCenter(): void {
-        if (popouts.hasCurrent && popouts.currentName === "controlcenter") {
-            popouts.hasCurrent = false;
-            return;
-        }
-
+    // One panel for every status icon (wifi, bluetooth, battery, audio...) instead of a popout each
+    function openControlCenter(): void {
         for (let i = 0; i < repeater.count; i++) {
             const entry = repeater.itemAt(i) as EntryWrapper;
             if (entry?.entryId === "statusIcons") {
@@ -46,6 +42,13 @@ RowLayout {
                 return;
             }
         }
+    }
+
+    function toggleControlCenter(): void {
+        if (popouts.hasCurrent && popouts.currentName === "controlcenter")
+            popouts.hasCurrent = false;
+        else
+            openControlCenter();
     }
 
     function checkPopout(x: real): void {
@@ -66,13 +69,7 @@ RowLayout {
         const id = ch.entryId;
 
         if (id === "statusIcons" && Config.bar.popouts.statusIcons) {
-            const items = (ch.item as HStatusIcons).items;
-            const icon = items.childAt(mapToItem(items, x, 0).x, items.height / 2);
-            if (icon) {
-                popouts.currentName = icon.name;
-                popouts.currentCenter = Qt.binding(() => icon.mapToItem(root, icon.implicitWidth / 2, 0).x);
-                popouts.hasCurrent = true;
-            }
+            openControlCenter();
         } else if (id === "tray" && Config.bar.popouts.tray) {
             const tray = ch.item as HTray;
             // Compact tray: hovering the collapsed tray expands it; popouts only work on the revealed icons
@@ -147,6 +144,9 @@ RowLayout {
             DelegateChoice {
                 roleValue: "spacer"
                 delegate: EntryWrapper {
+                    // No gap between the workspaces and the window title: the title sits right next to
+                    // them and follows the workspace pill as it expands
+                    visible: repeater.model.values[index + 1]?.id !== "activeWindow"
                     Layout.fillWidth: true
                 }
             }

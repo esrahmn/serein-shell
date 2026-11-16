@@ -30,12 +30,8 @@ ColumnLayout {
         }
     }
 
-    function toggleControlCenter(): void {
-        if (popouts.hasCurrent && popouts.currentName === "controlcenter") {
-            popouts.hasCurrent = false;
-            return;
-        }
-
+    // One panel for every status icon (wifi, bluetooth, battery, audio...) instead of a popout each
+    function openControlCenter(): void {
         for (let i = 0; i < repeater.count; i++) {
             const entry = repeater.itemAt(i) as EntryWrapper;
             if (entry?.entryId === "statusIcons") {
@@ -45,6 +41,13 @@ ColumnLayout {
                 return;
             }
         }
+    }
+
+    function toggleControlCenter(): void {
+        if (popouts.hasCurrent && popouts.currentName === "controlcenter")
+            popouts.hasCurrent = false;
+        else
+            openControlCenter();
     }
 
     function checkPopout(y: real): void {
@@ -66,13 +69,7 @@ ColumnLayout {
         const top = ch.y;
 
         if (id === "statusIcons" && Config.bar.popouts.statusIcons) {
-            const items = (ch.item as StatusIcons).items;
-            const icon = items.childAt(items.width / 2, mapToItem(items, 0, y).y);
-            if (icon) {
-                popouts.currentName = icon.name;
-                popouts.currentCenter = Qt.binding(() => icon.mapToItem(root, 0, icon.implicitHeight / 2).y);
-                popouts.hasCurrent = true;
-            }
+            openControlCenter();
         } else if (id === "tray" && Config.bar.popouts.tray) {
             const tray = ch.item as Tray;
             if (!Config.bar.tray.compact || (tray.expanded && !tray.expandIcon.contains(mapToItem(tray.expandIcon, tray.implicitWidth / 2, y)))) {

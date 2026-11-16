@@ -91,14 +91,24 @@ Item {
         }
     }
 
-    // Unless the bar is on the left, the popout can sit over other panels (sidebar, notifications,
-    // utilities, ...), so give it an opaque backdrop to keep their contents from showing through.
+    // Unless the bar is on the left, the popout can sit over other panels (sidebar, utilities, ...), so
+    // give it an opaque backdrop while one of them is open to keep their contents from showing through.
+    // Otherwise there is no backdrop, so the popout gets the same transparency and blur as the bar.
+    readonly property var screenState: ShellState.forScreen(screen)
+    readonly property bool overOtherPanel: !!screenState && (screenState.sidebar || screenState.utilities || screenState.dashboard || screenState.launcher || screenState.session)
+
     StyledRect {
         anchors.fill: content
         visible: !UiPrefs.barOnLeft
         radius: Tokens.rounding.extraLarge
         color: Colours.palette.m3surfaceContainer
-        opacity: (1 - root.offsetScale) * (content.isDetached ? 0 : 1)
+        opacity: (1 - root.offsetScale) * (content.isDetached || !root.overOtherPanel ? 0 : 1)
+
+        Behavior on opacity {
+            Anim {
+                type: Anim.DefaultEffects
+            }
+        }
     }
 
     Wrapper {
