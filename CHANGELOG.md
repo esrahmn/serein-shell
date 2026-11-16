@@ -8,6 +8,8 @@
   worked (kept in `~/.cache/serein/last-good`), so a mistake never leaves you without a bar.
 - Left/right bar now matches the top/bottom one: the workspace pill collapses to the focused workspace and expands on
   hover, the window title sits right below it, the clock is centred and the tray sits next to the status icons.
+- Fix: the control center showed "AC, No battery" on laptops (a property named `onBattery` clashed with QML's signal
+  handler naming); it now shows the real level and charging time.
 - Fix: `drawers list` / `isOpen` no longer fail when there is no active monitor.
 
 ## 0.2.0

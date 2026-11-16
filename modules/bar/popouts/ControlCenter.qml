@@ -29,11 +29,18 @@ Item {
     readonly property color accent: Colours.palette.m3primary
 
     readonly property UPowerDevice battery: UPower.displayDevice
-    readonly property bool onBattery: battery.isLaptopBattery
+    readonly property bool hasBattery: battery.isLaptopBattery
     readonly property real batteryLevel: Math.max(0, Math.min(1, battery.percentage))
     readonly property bool charging: battery.state === UPowerDeviceState.Charging || battery.state === UPowerDeviceState.FullyCharged
 
     readonly property var connectedBt: Bluetooth.devices.values.filter(d => d.connected) // qmllint disable unresolved-type
+
+    // 1h 5m, 30m: short enough for the narrow battery tile
+    function formatShort(s: int): string {
+        const h = Math.floor(s / 3600);
+        const m = Math.floor(s / 60) % 60;
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    }
 
     function formatTime(s: int): string {
         const h = Math.floor(s / 3600);
@@ -501,32 +508,44 @@ Item {
                     anchors.left: drop.right
                     anchors.leftMargin: Tokens.padding.small
                     anchors.right: parent.right
-                    anchors.rightMargin: Tokens.padding.large
+                    anchors.rightMargin: Tokens.padding.small
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 2
 
                     StyledText {
-                        text: root.onBattery ? `${Math.round(root.batteryLevel * 100)}%` : "AC"
+                        text: root.hasBattery ? `${Math.round(root.batteryLevel * 100)}%` : "AC"
                         font: Tokens.font.headline.medium
+                    }
+
+                    // State on the first line, time on the second, so nothing wraps
+                    StyledText {
+                        width: parent.width
+                        elide: Text.ElideRight
+                        color: root.charging ? root.accent : root.mutedColour
+                        font: Tokens.font.body.small
+                        text: {
+                            if (!root.hasBattery)
+                                return Tr.tr("No battery");
+                            if (root.battery.state === UPowerDeviceState.FullyCharged)
+                                return Tr.tr("Fully charged");
+                            return root.charging ? Tr.tr("Charging") : Tr.tr("On battery");
+                        }
                     }
 
                     StyledText {
                         width: parent.width
-                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
                         color: root.mutedColour
                         font: Tokens.font.body.small
+                        visible: text.length > 0
                         text: {
-                            if (!root.onBattery)
-                                return Tr.tr("No battery");
-                            if (root.battery.state === UPowerDeviceState.FullyCharged)
-                                return Tr.tr("Fully charged");
+                            if (!root.hasBattery || root.battery.state === UPowerDeviceState.FullyCharged)
+                                return "";
                             if (root.charging && root.battery.timeToFull > 0)
-                                return Tr.tr("Charging · full in %1").arg(root.formatTime(root.battery.timeToFull));
-                            if (root.charging)
-                                return Tr.tr("Charging");
-                            if (root.battery.timeToEmpty > 0)
-                                return Tr.tr("%1 left").arg(root.formatTime(root.battery.timeToEmpty));
-                            return Tr.tr("On battery");
+                                return Tr.tr("Full in %1").arg(root.formatShort(root.battery.timeToFull));
+                            if (!root.charging && root.battery.timeToEmpty > 0)
+                                return Tr.tr("%1 left").arg(root.formatShort(root.battery.timeToEmpty));
+                            return "";
                         }
                     }
                 }
