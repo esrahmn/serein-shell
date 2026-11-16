@@ -88,8 +88,8 @@ StyledWindow {
     Region {
         id: emptyRegion
 
-        x: panels.notifications.x + bar.implicitWidth
-        y: panels.notifications.y + root.borderThickness
+        x: panels.notifications.x + panels.insetLeft
+        y: panels.notifications.y + panels.insetTop
         width: panels.notifications.width
         height: panels.notifications.height
 
@@ -168,10 +168,10 @@ StyledWindow {
             anchors.margins: -50 // Make border thicker to smooth out bulge from closed drawers
             group: blobGroup
             radius: root.borderRounding
-            borderLeft: bar.implicitWidth - anchors.margins - root.sdfBorderOffset
-            borderRight: root.borderThickness - anchors.margins - root.sdfBorderOffset
-            borderTop: root.borderThickness - anchors.margins - root.sdfBorderOffset
-            borderBottom: root.borderThickness - anchors.margins - root.sdfBorderOffset
+            borderLeft: (panels.barLeft ? bar.size : root.borderThickness) - anchors.margins - root.sdfBorderOffset
+            borderRight: (panels.barRight ? bar.size : root.borderThickness) - anchors.margins - root.sdfBorderOffset
+            borderTop: (panels.barTop ? bar.size : root.borderThickness) - anchors.margins - root.sdfBorderOffset
+            borderBottom: (panels.barBottom ? bar.size : root.borderThickness) - anchors.margins - root.sdfBorderOffset
         }
 
         PanelBg {
@@ -193,7 +193,7 @@ StyledWindow {
 
             panel: panels.sessionWrapper
             deformAmount: 0.2
-            x: panels.sessionWrapper.x + panels.session.x + bar.implicitWidth
+            x: panels.sessionWrapper.x + panels.session.x + panels.insetLeft
             implicitWidth: panels.session.width
         }
 
@@ -212,7 +212,7 @@ StyledWindow {
 
             panel: panels.osdWrapper
             deformAmount: 0.25
-            x: panels.osdWrapper.x + panels.osd.x + bar.implicitWidth
+            x: panels.osdWrapper.x + panels.osd.x + panels.insetLeft
             implicitWidth: panels.osd.width
         }
 
@@ -234,13 +234,15 @@ StyledWindow {
         PanelBg {
             id: popoutBg
 
-            // Extra width to prevent vertical movement deformation partially detaching panel from bar
+            // Extra size (towards the bar) to prevent movement deformation partially detaching panel from bar
             property real extraWidth: panels.popouts.isDetached ? 0 : 0.2
 
             panel: panels.popoutsWrapper
             deformAmount: panels.popouts.isDetached ? 0.05 : panels.popouts.hasCurrent ? 0.15 : 0.1
-            x: panels.popoutsWrapper.x + panels.popouts.x + bar.implicitWidth - panels.popouts.width * extraWidth
-            implicitWidth: panels.popouts.width * (1 + extraWidth)
+            x: panels.popoutsWrapper.x + panels.popouts.x + panels.insetLeft - (panels.barLeft ? panels.popouts.width * extraWidth : 0)
+            y: panels.popoutsWrapper.y + panels.popouts.y + panels.insetTop - (panels.barTop ? panels.popouts.height * extraWidth : 0)
+            implicitWidth: panels.popouts.width * (1 + (bar.horizontal ? 0 : extraWidth))
+            implicitHeight: panels.popouts.height * (1 + (bar.horizontal ? extraWidth : 0))
 
             Behavior on extraWidth {
                 Anim {}
@@ -299,8 +301,11 @@ StyledWindow {
         BarWrapper {
             id: bar
 
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
+            // Explicit geometry (not conditional anchors) so switching edges live leaves no stale position
+            x: !horizontal && onRight ? parent.width - width : 0
+            y: horizontal && onBottom ? parent.height - height : 0
+            width: horizontal ? parent.width : implicitWidth
+            height: horizontal ? implicitHeight : parent.height
 
             screen: root.screen
             screenState: root.screenState
@@ -339,8 +344,8 @@ StyledWindow {
         property real deformAmount: 0.15
 
         group: blobGroup
-        x: panel.x + bar.implicitWidth
-        y: panel.y + root.borderThickness
+        x: panel.x + panels.insetLeft
+        y: panel.y + panels.insetTop
         implicitWidth: panel.width
         implicitHeight: panel.height
         radius: Tokens.rounding.extraLarge

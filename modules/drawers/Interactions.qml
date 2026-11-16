@@ -23,39 +23,88 @@ CustomMouseArea {
     property bool osdShortcutActive
     property bool utilitiesShortcutActive
 
+    readonly property bool barOnRight: panels.barRight
+    readonly property bool barHorizontal: bar.horizontal
+    // Space taken by the bar on the right edge (0 when the bar is elsewhere)
+    readonly property real rightGap: barOnRight ? bar.size : 0
+
+    function overBar(x: real, y: real): bool {
+        if (panels.barRight)
+            return x > width - bar.size;
+        if (panels.barTop)
+            return y < bar.size;
+        if (panels.barBottom)
+            return y > height - bar.size;
+        return x < bar.size;
+    }
+
+    function overBarClamped(x: real, y: real): bool {
+        if (panels.barRight)
+            return x > width - bar.clampedSize;
+        if (panels.barTop)
+            return y < bar.clampedSize;
+        if (panels.barBottom)
+            return y > height - bar.clampedSize;
+        return x < bar.clampedSize;
+    }
+
+    // Pointer coordinate along the bar (y for a left/right bar, x for a top/bottom bar)
+    function alongBar(x: real, y: real): real {
+        return barHorizontal ? x : y;
+    }
+
+    // Is x on the right-hand side of a panel's left edge (and not over the bar)?
+    function rightOfPanelEdge(panelX: real, x: real, y: real): bool {
+        return x > Math.min(width - Config.border.minThickness, panels.insetLeft + panelX) && !overBar(x, y);
+    }
+
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
-        const panelY = root.borderThickness + panel.y;
+        const panelY = panels.insetTop + panel.y;
         return y >= panelY - Config.border.rounding && y <= panelY + panel.height + Config.border.rounding;
     }
 
     function withinPanelWidth(panel: Item, x: real, y: real): bool {
-        const panelX = bar.implicitWidth + panel.x;
-        return x >= panelX - Config.border.rounding && x <= panelX + panel.width + Config.border.rounding;
+        const panelX = panels.insetLeft + panel.x;
+        return x >= panelX - Config.border.rounding && x <= panelX + panel.width + Config.border.rounding && !(!barHorizontal && overBar(x, y));
     }
 
     function inLeftPanel(panel: Item, x: real, y: real): bool {
-        return x < bar.implicitWidth + panel.x + panel.width && withinPanelHeight(panel, x, y);
+        return x < panels.insetLeft + panel.x + panel.width && withinPanelHeight(panel, x, y);
     }
 
     function inRightPanel(panel: Item, x: real, y: real): bool {
-        return x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panel.x) && withinPanelHeight(panel, x, y);
+        return rightOfPanelEdge(panel.x, x, y) && withinPanelHeight(panel, x, y);
+    }
+
+    // Is the pointer over the bar popout, on whichever side of the screen it opens from?
+    function inPopoutPanel(x: real, y: real): bool {
+        const p = panels.popoutsWrapper;
+        if (panels.barTop || panels.barBottom) {
+            const top = panels.insetTop + p.y;
+            return y >= top - Config.border.rounding && y <= top + p.height + Config.border.rounding && x >= panels.insetLeft + p.x - Config.border.rounding && x <= panels.insetLeft + p.x + p.width + Config.border.rounding;
+        }
+        return barOnRight ? inRightPanel(p, x, y) : inLeftPanel(p, x, y);
     }
 
     function inTopPanel(panel: Item, x: real, y: real): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y < Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) && withinPanelWidth(panel, x, y);
+        // With the bar on the top edge, a closed panel is only triggered from the screen's very edge
+        // (not the whole bar); once it is open, the bar band above it counts as part of the panel
+        const reach = panels.barTop && panelHeight <= 0 ? 0 : panels.insetTop + panelHeight;
+        return y < Math.max(Config.border.minThickness, reach) && withinPanelWidth(panel, x, y);
     }
 
     function inBottomPanel(panel: Item, x: real, y: real, isCorner = false): bool {
         const panelHeight = panel.height * (1 - (panel.offsetScale ?? 0)); // qmllint disable missing-property
-        return y > height - Math.max(Config.border.minThickness, Config.border.thickness + panelHeight) - (isCorner ? Config.border.rounding : 0) && withinPanelWidth(panel, x, y);
+        const reach = panels.barBottom && panelHeight <= 0 ? 0 : panels.insetBottom + panelHeight;
+        return y > height - Math.max(Config.border.minThickness, reach) - (isCorner ? Config.border.rounding : 0) && withinPanelWidth(panel, x, y);
     }
 
     function onWheel(event: WheelEvent): void {
         if (fullscreen)
             return;
-        if (event.x < bar.implicitWidth) {
-            bar.handleWheel(event.y, event.angleDelta);
+        if (overBar(event.x, event.y)) {
+            bar.handleWheel(alongBar(event.x, event.y), event.angleDelta);
         }
     }
 
@@ -106,14 +155,16 @@ CustomMouseArea {
         }
 
         // Show bar in non-exclusive mode on hover
-        if (!screenState.bar && Config.bar.showOnHover && x < bar.clampedWidth)
+        if (!screenState.bar && Config.bar.showOnHover && overBarClamped(x, y))
             bar.isHovered = true;
 
         // Show/hide bar on drag
-        if (pressed && dragStart.x < bar.clampedWidth) {
-            if (dragX > Config.bar.dragThreshold)
+        if (pressed && overBarClamped(dragStart.x, dragStart.y)) {
+            // Dragging away from the screen edge reveals the bar
+            const barDrag = panels.barRight ? -dragX : panels.barTop ? dragY : panels.barBottom ? -dragY : dragX;
+            if (barDrag > Config.bar.dragThreshold)
                 screenState.bar = true;
-            else if (dragX < -Config.bar.dragThreshold)
+            else if (barDrag < -Config.bar.dragThreshold)
                 screenState.bar = false;
         }
 
@@ -131,12 +182,12 @@ CustomMouseArea {
                 root.panels.osd.hovered = true;
             }
 
-            const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x);
+            const showSidebar = pressed && rightOfPanelEdge(panels.sidebar.x, dragStart.x, dragStart.y);
 
             // Show sidebar on hover (top-right corner, bounded by notification panel height)
             if (Config.sidebar.showOnHover) {
                 const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
+                const showSidebarHover = rightOfPanelEdge(panels.sidebar.x, x, y) && y <= sidebarTriggerY;
                 if (showSidebarHover && !screenState.sidebar)
                     screenState.sidebar = true;
             }
@@ -156,7 +207,7 @@ CustomMouseArea {
                 screenState.sidebar = true;
             }
         } else {
-            const outOfSidebar = x < width - panels.sidebar.width * (1 - panels.sidebar.offsetScale);
+            const outOfSidebar = x < width - rightGap - panels.sidebar.width * (1 - panels.sidebar.offsetScale);
             // Show osd on hover
             const showOsd = outOfSidebar && inRightPanel(panels.osdWrapper, x, y);
 
@@ -181,7 +232,7 @@ CustomMouseArea {
             // Show/hide sidebar on hover
             if (Config.sidebar.showOnHover && !pressed) {
                 const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
+                const showSidebarHover = rightOfPanelEdge(panels.sidebar.x, x, y) && y <= sidebarTriggerY;
                 if (showSidebarHover && !screenState.sidebar) {
                     screenState.sidebar = true;
                 } else {
@@ -219,7 +270,7 @@ CustomMouseArea {
         }
 
         // Show/hide dashboard on drag (for touchscreen devices)
-        if (pressed && inTopPanel(panels.dashboard, dragStart.x, dragStart.y) && withinPanelWidth(panels.dashboard, x, y)) {
+        if (pressed && !screenState.dashboardDragLock && inTopPanel(panels.dashboard, dragStart.x, dragStart.y) && withinPanelWidth(panels.dashboard, x, y)) {
             if (dragY > Config.dashboard.dragThreshold)
                 screenState.dashboard = true;
             else if (dragY < -Config.dashboard.dragThreshold)
@@ -238,9 +289,9 @@ CustomMouseArea {
         }
 
         // Show popouts on hover
-        if (x < bar.implicitWidth) {
-            bar.checkPopout(y);
-        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inLeftPanel(panels.popoutsWrapper, x, y)) {
+        if (overBar(x, y)) {
+            bar.checkPopout(alongBar(x, y));
+        } else if ((!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) && !inPopoutPanel(x, y)) {
             popouts.hasCurrent = false;
             bar.closeTray();
         }

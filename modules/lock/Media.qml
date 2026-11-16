@@ -14,7 +14,16 @@ StyledClippingRect {
 
     required property var lock
 
-    implicitHeight: layout.implicitHeight + layout.anchors.margins * 2
+    readonly property string title: (Players.active?.trackTitle ?? Tr.tr("Nothing playing")) || Tr.tr("Unknown track")
+    readonly property string artist: (Players.active?.trackArtist ?? Tr.tr("Try playing some music!")) || Tr.tr("Unknown artist")
+
+    // The full (stacked) layout wants this much; when the lock column squeezes the card below it,
+    // `compact` switches to a single row (title and artist on the left, controls on the right)
+    readonly property real fullHeight: layout.implicitHeight + layout.anchors.margins * 2
+    readonly property bool compact: height < fullHeight - 1
+
+    implicitHeight: fullHeight
+    Layout.minimumHeight: compactLayout.implicitHeight + compactLayout.anchors.margins * 2
     radius: Tokens.rounding.extraLarge
     color: Colours.tPalette.m3surfaceContainer
 
@@ -54,10 +63,12 @@ StyledClippingRect {
         anchors.margins: Tokens.padding.extraLarge
         spacing: Tokens.spacing.extraSmall
 
+        visible: !root.compact
+
         StyledText {
             Layout.fillWidth: true
             animate: true
-            text: (Players.active?.trackTitle ?? Tr.tr("Nothing playing")) || Tr.tr("Unknown track")
+            text: root.title
             color: Colours.palette.m3primary
             horizontalAlignment: Text.AlignHCenter
             font: Tokens.font.title.medium
@@ -67,46 +78,85 @@ StyledClippingRect {
         StyledText {
             Layout.fillWidth: true
             animate: true
-            text: (Players.active?.trackArtist ?? Tr.tr("Try playing some music!")) || Tr.tr("Unknown artist")
+            text: root.artist
             color: Colours.palette.m3onSurfaceVariant
             horizontalAlignment: Text.AlignHCenter
             font: Tokens.font.body.small
             elide: Text.ElideRight
         }
 
-        ButtonRow {
+        Controls {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Tokens.spacing.medium
+        }
+    }
 
-            spacing: Tokens.spacing.extraSmall
+    RowLayout {
+        id: compactLayout
 
-            IconButton {
-                type: IconButton.Tonal
-                icon: "skip_previous"
-                isRound: true
-                shapeMorph: true
-                disabled: !Players.active?.canGoPrevious
-                onClicked: Players.active?.previous()
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: Tokens.padding.large
+        spacing: Tokens.spacing.medium
+
+        visible: root.compact
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            StyledText {
+                Layout.fillWidth: true
+                animate: true
+                text: root.title
+                color: Colours.palette.m3primary
+                font: Tokens.font.title.small
+                elide: Text.ElideRight
             }
 
-            IconButton {
-                icon: Players.active?.isPlaying ? "pause" : "play_arrow"
-                isRound: true
-                shapeMorph: true
-                checked: Players.active?.isPlaying ?? false
-                disabled: !Players.active?.canTogglePlaying
-                onClicked: Players.active?.togglePlaying()
-                implicitWidth: implicitHeight + Tokens.padding.largeIncreased * 2
+            StyledText {
+                Layout.fillWidth: true
+                animate: true
+                text: root.artist
+                color: Colours.palette.m3onSurfaceVariant
+                font: Tokens.font.body.small
+                elide: Text.ElideRight
             }
+        }
 
-            IconButton {
-                type: IconButton.Tonal
-                icon: "skip_next"
-                isRound: true
-                shapeMorph: true
-                disabled: !Players.active?.canGoNext
-                onClicked: Players.active?.next()
-            }
+        Controls {}
+    }
+
+    component Controls: ButtonRow {
+        spacing: Tokens.spacing.extraSmall
+
+        IconButton {
+            type: IconButton.Tonal
+            icon: "skip_previous"
+            isRound: true
+            shapeMorph: true
+            disabled: !Players.active?.canGoPrevious
+            onClicked: Players.active?.previous()
+        }
+
+        IconButton {
+            icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+            isRound: true
+            shapeMorph: true
+            checked: Players.active?.isPlaying ?? false
+            disabled: !Players.active?.canTogglePlaying
+            onClicked: Players.active?.togglePlaying()
+            implicitWidth: implicitHeight + Tokens.padding.largeIncreased * 2
+        }
+
+        IconButton {
+            type: IconButton.Tonal
+            icon: "skip_next"
+            isRound: true
+            shapeMorph: true
+            disabled: !Players.active?.canGoNext
+            onClicked: Players.active?.next()
         }
     }
 }

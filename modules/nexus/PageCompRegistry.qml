@@ -140,6 +140,11 @@ QtObject {
                 Component {
                     BarClock {}
                 }
+
+                // Lock screen (appended so the indices above stay put)
+                Component {
+                    LockPanel {}
+                }
             }
         },
         Component {

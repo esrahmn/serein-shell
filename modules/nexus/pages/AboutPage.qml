@@ -78,7 +78,7 @@ PageBase {
 
                 StyledText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: CUtils.version ? `v${CUtils.version}` : "…"
+                    text: `v${Version.serein}`
                     color: Colours.palette.m3onSurfaceVariant
                     font: Tokens.font.body.medium
                 }
@@ -126,7 +126,12 @@ PageBase {
         InfoRow {
             first: true
             label: Tr.trCtx("Shell", "the serein shell itself, not a unix shell")
-            value: CUtils.version || "…"
+            value: Version.serein + (Version.revision ? ` (${Version.revision})` : "")
+        }
+
+        InfoRow {
+            label: Tr.tr("Based on caelestia")
+            value: Version.caelestiaBase || "…"
         }
 
         InfoRow {

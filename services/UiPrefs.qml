@@ -1,0 +1,55 @@
+pragma Singleton
+
+import QtQuick
+import Quickshell
+import Quickshell.Io
+import qs.utils
+
+// Serein's own UI preferences. The caelestia config plugin is fixed, so settings it has no
+// field for (like the bar position) live in their own small JSON file next to the shell state.
+Singleton {
+    id: root
+
+    // "left" | "right" | "top" | "bottom"
+    readonly property string barPosition: ["left", "right", "top", "bottom"].includes(adapter.barPosition) ? adapter.barPosition : "left"
+    readonly property bool barOnLeft: barPosition === "left"
+    readonly property bool barOnRight: barPosition === "right"
+    readonly property bool barOnTop: barPosition === "top"
+    readonly property bool barOnBottom: barPosition === "bottom"
+    readonly property bool barHorizontal: barOnTop || barOnBottom
+
+    // Falling rain over the lock screen background
+    readonly property bool lockRain: adapter.lockRain
+    // Dashboard tab with live workspace previews
+    readonly property bool dashboardOverview: adapter.dashboardOverview
+
+    function setLockRain(enabled: bool): void {
+        adapter.lockRain = enabled;
+    }
+
+    function setDashboardOverview(enabled: bool): void {
+        adapter.dashboardOverview = enabled;
+    }
+
+    function setBarPosition(pos: string): void {
+        if (["left", "right", "top", "bottom"].includes(pos))
+            adapter.barPosition = pos;
+    }
+
+    FileView {
+        path: `${Paths.state}/serein-ui.json`
+        blockLoading: true
+        printErrors: false
+        watchChanges: true
+        onFileChanged: reload()
+        onAdapterUpdated: writeAdapter()
+
+        adapter: JsonAdapter {
+            id: adapter
+
+            property string barPosition: "left"
+            property bool lockRain: true
+            property bool dashboardOverview: true
+        }
+    }
+}

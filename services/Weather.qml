@@ -180,7 +180,7 @@ Singleton {
 
         const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=geocodejson&accept-language=${lang}`;
         const nominatimHeaders = {
-            "User-Agent": `serein-shell/${CUtils.version}`
+            "User-Agent": `serein-shell/${Version.serein}`
         };
 
         Requests.get(nominatimUrl, text => {

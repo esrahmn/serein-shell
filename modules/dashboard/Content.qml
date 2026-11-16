@@ -9,6 +9,7 @@ import Caelestia.Config
 import Caelestia.I18n
 import qs.components
 import qs.components.filedialog
+import qs.services
 
 Item {
     id: root
@@ -41,6 +42,12 @@ Item {
                 iconName: "cloud",
                 text: Tr.tr("Weather"),
                 enabled: Config.dashboard.showWeather
+            },
+            {
+                component: overviewComponent,
+                iconName: "grid_view",
+                text: Tr.tr("Workspaces"),
+                enabled: UiPrefs.dashboardOverview
             }
         ];
         return allTabs.filter(tab => tab.enabled);
@@ -90,6 +97,7 @@ Item {
             anchors.fill: parent
 
             flickableDirection: Flickable.HorizontalFlick
+            interactive: !root.screenState.dashboardDragLock
 
             implicitWidth: currentItem?.implicitWidth ?? 0
             implicitHeight: currentItem?.implicitHeight ?? 0
@@ -180,6 +188,14 @@ Item {
                 id: weatherComponent
 
                 WeatherTab {}
+            }
+
+            Component {
+                id: overviewComponent
+
+                Overview {
+                    screenState: root.screenState
+                }
             }
 
             Behavior on contentX {

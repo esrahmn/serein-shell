@@ -42,7 +42,9 @@ Item {
     Loader {
         asynchronous: true
         anchors.fill: parent
-        active: !Config.bar.activeWindow.showOnHover
+        // Clickable when the popout is click-driven, or when the hover popout is off: then a click
+        // opens the detached window info panel (preview, details, move-to-workspace buttons) directly
+        active: !Config.bar.activeWindow.showOnHover || !Config.bar.popouts.activeWindow
 
         sourceComponent: MouseArea {
             cursorShape: Qt.PointingHandCursor
@@ -54,7 +56,9 @@ Item {
             }
             onClicked: {
                 const popouts = root.bar.popouts;
-                if (popouts.hasCurrent) {
+                if (!root.Config.bar.popouts.activeWindow) {
+                    popouts.detach("winfo");
+                } else if (popouts.hasCurrent) {
                     popouts.hasCurrent = false;
                 } else {
                     popouts.currentName = "activewindow";

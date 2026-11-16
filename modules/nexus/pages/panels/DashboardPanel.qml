@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.services
 import qs.modules.nexus.common
 
 PageBase {
@@ -71,10 +72,17 @@ PageBase {
         }
 
         ToggleRow {
-            last: true
             text: Tr.tr("Weather")
             checked: Config.dashboard.showWeather
             onToggled: GlobalConfig.dashboard.showWeather = checked
+        }
+
+        ToggleRow {
+            last: true
+            text: Tr.tr("Workspaces")
+            subtext: Tr.tr("Live workspace overview; drag windows between workspaces")
+            checked: UiPrefs.dashboardOverview
+            onToggled: UiPrefs.setDashboardOverview(checked)
         }
 
         // Performance widgets

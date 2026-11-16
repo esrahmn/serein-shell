@@ -34,9 +34,21 @@ Item {
     readonly property alias toasts: toasts
     readonly property alias sidebar: sidebar
 
+    // Distance from the window edge to the panel area on each side (the bar side is thicker)
+    readonly property bool barLeft: !bar.horizontal && !bar.onRight
+    readonly property bool barRight: !bar.horizontal && bar.onRight
+    readonly property bool barTop: bar.horizontal && !bar.onBottom
+    readonly property bool barBottom: bar.horizontal && bar.onBottom
+    readonly property real insetLeft: barLeft ? bar.size : borderThickness
+    readonly property real insetRight: barRight ? bar.size : borderThickness
+    readonly property real insetTop: barTop ? bar.size : borderThickness
+    readonly property real insetBottom: barBottom ? bar.size : borderThickness
+
     anchors.fill: parent
-    anchors.margins: borderThickness
-    anchors.leftMargin: bar.implicitWidth
+    anchors.leftMargin: insetLeft
+    anchors.rightMargin: insetRight
+    anchors.topMargin: insetTop
+    anchors.bottomMargin: insetBottom
 
     Item {
         id: osdWrapper
@@ -118,6 +130,8 @@ Item {
 
     BarPopouts.ClipWrapper {
         id: popoutsWrapper
+
+        z: 1 // above the right-hand panels when the bar is on the right
 
         screen: root.screen
         borderThickness: root.borderThickness

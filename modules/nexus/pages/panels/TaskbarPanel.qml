@@ -3,6 +3,8 @@ pragma ComponentBehavior: Bound
 import QtQuick.Layouts
 import Caelestia.Config
 import Caelestia.I18n
+import qs.components.controls
+import qs.services
 import qs.modules.nexus.common
 
 PageBase {
@@ -11,15 +13,53 @@ PageBase {
     title: Tr.tr("Taskbar")
     isSubPage: true
 
+    readonly property list<MenuItem> positionItems: [
+        MenuItem {
+            text: Tr.tr("Left")
+            icon: "dock_to_left"
+            value: "left"
+        },
+        MenuItem {
+            text: Tr.tr("Right")
+            icon: "dock_to_right"
+            value: "right"
+        },
+        MenuItem {
+            text: Tr.tr("Top")
+            icon: "dock_to_bottom"
+            value: "top"
+        },
+        MenuItem {
+            text: Tr.tr("Bottom")
+            icon: "dock_to_bottom"
+            value: "bottom"
+        }
+    ]
+
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         width: root.cappedWidth
         spacing: Tokens.spacing.extraSmall / 2
 
-        // Behaviour
+        // Position
         SectionHeader {
             first: true
+            text: Tr.tr("Position")
+        }
+
+        SelectRow {
+            first: true
+            last: true
+            label: Tr.tr("Screen edge")
+            subtext: Tr.tr("Which side of the screen the bar sits on")
+            menuItems: root.positionItems
+            active: root.positionItems.find(i => i.value === UiPrefs.barPosition)
+            onSelected: item => UiPrefs.setBarPosition(item.value)
+        }
+
+        // Behaviour
+        SectionHeader {
             text: Tr.tr("Behaviour")
         }
 

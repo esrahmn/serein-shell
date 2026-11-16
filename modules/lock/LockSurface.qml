@@ -5,6 +5,7 @@ import QtQuick.Effects
 import Quickshell.Wayland
 import Caelestia.Config
 import qs.components
+import qs.components.effects
 import qs.components.images
 import qs.services
 
@@ -174,6 +175,14 @@ WlSessionLockSurface {
             anchors.fill: parent
             sourceComponent: Config.lock.useWallpaper ? wallpaperBackground : screencopyBackground
         }
+    }
+
+    // Fine rain between the blurred background and the lock card; fades with the background
+    Rain {
+        anchors.fill: parent
+        visible: UiPrefs.lockRain
+        opacity: background.opacity
+        colour: Colours.palette.m3primary
     }
 
     Component {

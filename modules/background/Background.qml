@@ -64,7 +64,12 @@ Variants {
             active: Config.background.desktopClock.enabled
 
             anchors.margins: Tokens.padding.extraLargeIncreased
-            anchors.leftMargin: Tokens.padding.extraLargeIncreased + Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness)
+            readonly property real barInset: Tokens.padding.extraLargeIncreased + Tokens.sizes.bar.innerWidth + Math.max(Tokens.padding.small, Config.border.thickness)
+
+            anchors.leftMargin: UiPrefs.barOnLeft ? barInset : Tokens.padding.extraLargeIncreased
+            anchors.rightMargin: UiPrefs.barOnRight ? barInset : Tokens.padding.extraLargeIncreased
+            anchors.topMargin: UiPrefs.barOnTop ? barInset : Tokens.padding.extraLargeIncreased
+            anchors.bottomMargin: UiPrefs.barOnBottom ? barInset : Tokens.padding.extraLargeIncreased
 
             state: Config.background.desktopClock.position
             states: [
