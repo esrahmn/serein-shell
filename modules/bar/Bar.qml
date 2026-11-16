@@ -53,10 +53,6 @@ ColumnLayout {
     function checkPopout(y: real): void {
         const ch = childAt(width / 2, y) as EntryWrapper;
 
-        // Keep the control center open while the pointer stays on the bar
-        if (popouts.hasCurrent && popouts.currentName === "controlcenter")
-            return;
-
         if (ch?.entryId !== "tray")
             closeTray();
 
@@ -90,6 +86,8 @@ ColumnLayout {
             popouts.currentName = id.toLowerCase();
             popouts.currentCenter = (ch.item as Item).mapToItem(root, 0, (ch.item as Item).implicitHeight / 2).y ?? 0;
             popouts.hasCurrent = true;
+        } else {
+            popouts.hasCurrent = false;
         }
     }
 

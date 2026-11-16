@@ -30,8 +30,11 @@ Click a workspace or a window to jump to it, or drag a window onto another works
 - **Workspaces tab in the dashboard**: a grid of workspaces with live window previews (screencopy). Click a
   workspace to switch to it, click a window to focus it, or drag a window onto another workspace to move it.
 - **Control center**: click the status icons in the bar (any edge) to open a card with brightness as a moon
-  phase (drag to set it), Wi-Fi / Bluetooth / Quiet tiles, a wavy volume slider, a battery drop and a power
-  mode switch. Also `qs -c serein ipc call controlcenter toggle` or the `controlcenter` global shortcut.
+  phase (drag to set it), Wi-Fi / Bluetooth / Quiet and Mic / Awake / Record tiles, a wavy volume slider, a
+  now-playing row, a battery drop and a power mode switch (right-click the Wi-Fi or Bluetooth tile for the lists). Also `qs -c serein ipc call controlcenter toggle` or the `controlcenter` global shortcut.
+- **Line icons**: thin [Phosphor](https://phosphoricons.com) icons (MIT) instead of Material Symbols, switchable in
+  Nexus (Wallpaper & style → Line icons). The shell still asks for icons by Material name; `assets/icons/` holds
+  fonts with a ligature for every Material name that maps it to the matching Phosphor glyph.
 - **Look**: a Serein colour scheme (night blue slate with an aqua-blue accent; `serein scheme set -n serein`) and a
   default wallpaper of a crescent moon and fine rain, both generated for this project.
 - **Lock screen**: falling rain over the blurred background, and a Media card that switches to a compact row

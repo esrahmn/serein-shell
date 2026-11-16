@@ -41,6 +41,12 @@ Item {
         return h > 0 ? Tr.tr("%1 h %2 min").arg(h).arg(m) : Tr.tr("%1 min").arg(m);
     }
 
+    function formatClock(sec: real): string {
+        const m = Math.floor(sec / 60);
+        const r = Math.floor(sec % 60);
+        return `${m}:${r < 10 ? "0" : ""}${r}`;
+    }
+
     function cycleProfile(): void {
         const p = PowerProfiles.profile;
         if (p === PowerProfile.Balanced)
@@ -73,7 +79,7 @@ Item {
         }
     }
 
-    implicitWidth: 340
+    implicitWidth: 368
     implicitHeight: column.implicitHeight
 
     Column {
@@ -267,6 +273,43 @@ Item {
             }
         }
 
+        // More shape tiles: microphone, keep awake, screen record
+        Row {
+            width: parent.width
+            spacing: root.tileGap
+
+            ShapeTile {
+                icon: Audio.sourceMuted ? "mic_off" : "mic"
+                label: Tr.tr("Mic")
+                sub: Audio.sourceMuted ? Tr.tr("Muted") : Tr.tr("On")
+                checked: !Audio.sourceMuted
+                activeShape: MaterialShape.Cookie6Sided
+                onClicked: {
+                    const audio = Audio.source?.audio;
+                    if (audio)
+                        audio.muted = !audio.muted;
+                }
+            }
+
+            ShapeTile {
+                icon: "coffee"
+                label: Tr.tr("Awake")
+                sub: IdleInhibitor.enabled ? Tr.tr("Keeping on") : Tr.tr("Off")
+                checked: IdleInhibitor.enabled
+                activeShape: MaterialShape.Sunny
+                onClicked: IdleInhibitor.enabled = !IdleInhibitor.enabled
+            }
+
+            ShapeTile {
+                icon: "screen_record"
+                label: Tr.tr("Record")
+                sub: Recorder.running ? root.formatClock(Recorder.elapsed) : Tr.tr("Ready")
+                checked: Recorder.running
+                activeShape: MaterialShape.Cookie7Sided
+                onClicked: Recorder.running ? Recorder.stop() : Recorder.start()
+            }
+        }
+
         // Wavy volume
         StyledRect {
             id: volume
@@ -386,6 +429,85 @@ Item {
                     function set(mx: real): void {
                         Audio.setVolume(Math.max(0, Math.min(1, (mx + anchors.margins) / wave.width)));
                     }
+                }
+            }
+        }
+
+        // Now playing
+        StyledRect {
+            visible: Players.active !== null
+            width: parent.width
+            height: visible ? 76 : 0
+            radius: root.tileRadius
+            color: root.tileColour
+
+            MaterialShape {
+                id: noteBadge
+
+                x: Tokens.padding.large + 4
+                anchors.verticalCenter: parent.verticalCenter
+                implicitSize: 44
+                shape: Players.active?.isPlaying ? MaterialShape.Cookie9Sided : MaterialShape.Circle
+                color: Players.active?.isPlaying ? root.accent : Colours.layer(Colours.palette.m3surfaceContainerHighest, 3)
+                animationEasing: Tokens.anim.expressiveDefaultSpatial
+                animationDuration: Tokens.anim.durations.expressiveDefaultSpatial * Tokens.anim.durations.scale
+
+                MaterialIcon {
+                    anchors.centerIn: parent
+                    text: "music_note"
+                    color: Players.active?.isPlaying ? Colours.palette.m3onPrimary : root.mutedColour
+                    fontStyle: Tokens.font.icon.medium
+                    fill: Players.active?.isPlaying ? 1 : 0
+                }
+            }
+
+            Column {
+                anchors.left: noteBadge.right
+                anchors.leftMargin: Tokens.padding.large
+                anchors.right: controls.left
+                anchors.rightMargin: Tokens.padding.small
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 1
+
+                StyledText {
+                    width: parent.width
+                    text: (Players.active?.trackTitle ?? "") || Tr.tr("Unknown title")
+                    elide: Text.ElideRight
+                    font: Tokens.font.body.medium
+                }
+
+                StyledText {
+                    width: parent.width
+                    text: (Players.active?.trackArtist ?? "") || Tr.tr("Unknown artist")
+                    elide: Text.ElideRight
+                    color: root.mutedColour
+                    font: Tokens.font.body.small
+                }
+            }
+
+            Row {
+                id: controls
+
+                anchors.right: parent.right
+                anchors.rightMargin: Tokens.padding.large
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 2
+
+                MediaButton {
+                    icon: "skip_previous"
+                    enabled: Players.active?.canGoPrevious ?? false
+                    onClicked: Players.active?.previous()
+                }
+
+                MediaButton {
+                    icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+                    onClicked: Players.active?.togglePlaying()
+                }
+
+                MediaButton {
+                    icon: "skip_next"
+                    enabled: Players.active?.canGoNext ?? false
+                    onClicked: Players.active?.next()
                 }
             }
         }
@@ -532,6 +654,32 @@ Item {
                     onClicked: root.cycleProfile()
                 }
             }
+        }
+    }
+
+    component MediaButton: Item {
+        id: mb
+
+        property string icon
+
+        signal clicked
+
+        implicitWidth: 34
+        implicitHeight: 34
+        opacity: enabled ? 1 : 0.4
+
+        MaterialIcon {
+            anchors.centerIn: parent
+            text: mb.icon
+            fontStyle: Tokens.font.icon.medium
+            fill: 1
+            color: Colours.palette.m3onSurface
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: mb.clicked()
         }
     }
 

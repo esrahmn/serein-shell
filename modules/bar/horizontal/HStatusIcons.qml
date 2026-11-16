@@ -31,7 +31,7 @@ StyledRect {
         onClicked: root.clicked()
     }
 
-    implicitWidth: iconRow.implicitWidth + Tokens.padding.large * 2
+    implicitWidth: iconRow.implicitWidth + Tokens.padding.extraSmall * 2
     implicitHeight: Tokens.sizes.bar.innerWidth
 
     RowLayout {

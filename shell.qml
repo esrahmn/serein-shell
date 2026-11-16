@@ -24,6 +24,7 @@ ShellRoot {
     }
 
     GSFLoader {}
+    IconFontLoader {}
     ServiceLoader {}
 
     Background {}

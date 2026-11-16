@@ -214,7 +214,7 @@ CustomMouseArea {
 
                             return Colours.palette.m3onSurfaceVariant;
                         }
-                        opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.4
+                        opacity: dayItem.model.today || dayItem.model.month === grid.month ? 1 : 0.6
                         font: Tokens.font.body.small
                     }
                 }

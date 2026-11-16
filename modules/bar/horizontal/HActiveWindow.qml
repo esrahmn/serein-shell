@@ -26,12 +26,8 @@ Item {
         return title;
     }
 
-    // Width left for the title once the other bar entries have taken theirs
-    readonly property real maxWidth: {
-        const others = bar.children.filter(c => c.entryId && c.item !== this && c.entryId !== "spacer");
-        const used = others.reduce((acc, curr) => acc + (curr.item?.implicitWidth ?? curr.width), 0);
-        return Math.max(0, bar.width - used - bar.spacing * (bar.children.length - 1) - bar.hPadding * 2 - icon.implicitWidth - Tokens.spacing.small);
-    }
+    // Width left for the title: it stops before the centred clock
+    readonly property real maxWidth: Math.max(0, bar.width / 2 - bar.clockWidth / 2 - Tokens.spacing.large - (parent?.x ?? 0) - icon.implicitWidth - Tokens.spacing.small)
 
     clip: true
     implicitWidth: icon.implicitWidth + Tokens.spacing.small + title.implicitWidth

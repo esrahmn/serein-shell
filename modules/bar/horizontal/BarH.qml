@@ -19,6 +19,8 @@ RowLayout {
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
     readonly property int hPadding: Tokens.padding.large
+    // Width of the centred clock, so the window title knows where to stop
+    property real clockWidth
 
     function closeTray(): void {
         if (!Config.bar.tray.compact)
@@ -53,10 +55,6 @@ RowLayout {
 
     function checkPopout(x: real): void {
         const ch = childAt(x, height / 2) as EntryWrapper;
-
-        // Keep the control center open while the pointer stays on the bar
-        if (popouts.hasCurrent && popouts.currentName === "controlcenter")
-            return;
 
         if (ch?.entryId !== "tray")
             closeTray();
@@ -100,6 +98,8 @@ RowLayout {
             popouts.currentName = id.toLowerCase();
             popouts.currentCenter = (ch.item as Item).mapToItem(root, (ch.item as Item).implicitWidth / 2, 0).x ?? 0;
             popouts.hasCurrent = true;
+        } else {
+            popouts.hasCurrent = false;
         }
     }
 
@@ -188,8 +188,18 @@ RowLayout {
             DelegateChoice {
                 roleValue: "clock"
                 delegate: EntryWrapper {
+                    id: clockEntry
+
+                    // Takes no space in the row: the clock sits in the exact centre of the bar, so the tray
+                    // ends up right next to the status icons
+                    Layout.preferredWidth: 0
+                    Layout.leftMargin: -root.spacing * 1.75
+
                     HClock {
                         objectName: "taskbarClock"
+                        x: (root.width - width) / 2 - clockEntry.x
+                        onWidthChanged: root.clockWidth = width
+                        Component.onCompleted: root.clockWidth = width
                     }
                 }
             }

@@ -203,6 +203,15 @@ PageBase {
         ToggleRow {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
 
+            text: Tr.tr("Line icons")
+            subtext: Tr.tr("Thin Phosphor icons instead of Material Symbols")
+            checked: UiPrefs.iconStyle === "phosphor"
+            onToggled: UiPrefs.setIconStyle(checked ? "phosphor" : "material")
+        }
+
+        ToggleRow {
+            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
+
             last: true
             text: Tr.tr("Dark theme")
             checked: !Colours.light

@@ -221,6 +221,22 @@ Singleton {
         return icon;
     }
 
+    // Material names whose filled Phosphor glyph reads well as a solid shape. Every other icon uses the
+    // bold weight when it is "active" (fill), since e.g. a filled Wi-Fi is just a wedge.
+    readonly property var solidIconNames: ({
+            "play_arrow": 1, "play_circle": 1, "pause": 1, "stop": 1, "skip_next": 1, "skip_previous": 1,
+            "favorite": 1, "star": 1, "notifications": 1, "notifications_off": 1, "lock": 1, "lock_open": 1,
+            "water_drop": 1, "bedtime": 1, "dark_mode": 1, "light_mode": 1, "clear_day": 1, "warning": 1,
+            "error": 1, "info": 1, "mic": 1, "mic_off": 1, "volume_up": 1, "volume_down": 1, "volume_mute": 1,
+            "no_sound": 1, "bolt": 1, "eco": 1, "settings": 1, "home": 1, "folder": 1, "person": 1,
+            "bookmark": 1, "key": 1, "cloud": 1, "coffee": 1, "gamepad": 1, "sports_esports": 1, "keep": 1,
+            "power_settings_new": 1, "delete": 1, "palette": 1, "image": 1, "smartphone": 1, "headphones": 1
+        })
+
+    function isSolidIcon(name: string): bool {
+        return solidIconNames[name] === 1 || name.startsWith("battery_");
+    }
+
     function getBatteryIcon(percentage: real, charging = false): string {
         if (percentage === 1)
             return charging ? "battery_charging_full" : "battery_full";

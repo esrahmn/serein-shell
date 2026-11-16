@@ -30,6 +30,14 @@ Singleton {
         adapter.surfaceOpacity = Math.max(0.3, Math.min(1, Math.round(value * 100) / 100));
     }
 
+    // "phosphor" (Mac-like line icons) or "material"
+    readonly property string iconStyle: ["phosphor", "material"].includes(adapter.iconStyle) ? adapter.iconStyle : "phosphor"
+
+    function setIconStyle(style: string): void {
+        if (["phosphor", "material"].includes(style))
+            adapter.iconStyle = style;
+    }
+
     function setLockRain(enabled: bool): void {
         adapter.lockRain = enabled;
     }
@@ -58,6 +66,7 @@ Singleton {
             property bool lockRain: true
             property bool dashboardOverview: true
             property real surfaceOpacity: 0.7
+            property string iconStyle: "phosphor"
         }
     }
 }
