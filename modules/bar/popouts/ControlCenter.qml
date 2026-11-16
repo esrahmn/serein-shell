@@ -433,85 +433,6 @@ Item {
             }
         }
 
-        // Now playing
-        StyledRect {
-            visible: Players.active !== null
-            width: parent.width
-            height: visible ? 76 : 0
-            radius: root.tileRadius
-            color: root.tileColour
-
-            MaterialShape {
-                id: noteBadge
-
-                x: Tokens.padding.large + 4
-                anchors.verticalCenter: parent.verticalCenter
-                implicitSize: 44
-                shape: Players.active?.isPlaying ? MaterialShape.Cookie9Sided : MaterialShape.Circle
-                color: Players.active?.isPlaying ? root.accent : Colours.layer(Colours.palette.m3surfaceContainerHighest, 3)
-                animationEasing: Tokens.anim.expressiveDefaultSpatial
-                animationDuration: Tokens.anim.durations.expressiveDefaultSpatial * Tokens.anim.durations.scale
-
-                MaterialIcon {
-                    anchors.centerIn: parent
-                    text: "music_note"
-                    color: Players.active?.isPlaying ? Colours.palette.m3onPrimary : root.mutedColour
-                    fontStyle: Tokens.font.icon.medium
-                    fill: Players.active?.isPlaying ? 1 : 0
-                }
-            }
-
-            Column {
-                anchors.left: noteBadge.right
-                anchors.leftMargin: Tokens.padding.large
-                anchors.right: controls.left
-                anchors.rightMargin: Tokens.padding.small
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 1
-
-                StyledText {
-                    width: parent.width
-                    text: (Players.active?.trackTitle ?? "") || Tr.tr("Unknown title")
-                    elide: Text.ElideRight
-                    font: Tokens.font.body.medium
-                }
-
-                StyledText {
-                    width: parent.width
-                    text: (Players.active?.trackArtist ?? "") || Tr.tr("Unknown artist")
-                    elide: Text.ElideRight
-                    color: root.mutedColour
-                    font: Tokens.font.body.small
-                }
-            }
-
-            Row {
-                id: controls
-
-                anchors.right: parent.right
-                anchors.rightMargin: Tokens.padding.large
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 2
-
-                MediaButton {
-                    icon: "skip_previous"
-                    enabled: Players.active?.canGoPrevious ?? false
-                    onClicked: Players.active?.previous()
-                }
-
-                MediaButton {
-                    icon: Players.active?.isPlaying ? "pause" : "play_arrow"
-                    onClicked: Players.active?.togglePlaying()
-                }
-
-                MediaButton {
-                    icon: "skip_next"
-                    enabled: Players.active?.canGoNext ?? false
-                    onClicked: Players.active?.next()
-                }
-            }
-        }
-
         // Battery drop + power mode
         Row {
             width: parent.width
@@ -654,32 +575,6 @@ Item {
                     onClicked: root.cycleProfile()
                 }
             }
-        }
-    }
-
-    component MediaButton: Item {
-        id: mb
-
-        property string icon
-
-        signal clicked
-
-        implicitWidth: 34
-        implicitHeight: 34
-        opacity: enabled ? 1 : 0.4
-
-        MaterialIcon {
-            anchors.centerIn: parent
-            text: mb.icon
-            fontStyle: Tokens.font.icon.medium
-            fill: 1
-            color: Colours.palette.m3onSurface
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: mb.clicked()
         }
     }
 
