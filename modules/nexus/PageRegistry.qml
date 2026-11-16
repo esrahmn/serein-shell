@@ -14,6 +14,12 @@ QtObject {
             description: Tr.tr("Wallpaper, fonts, colours"),
             category: "appearance"
         },
+        {
+            label: Tr.tr("Serein"),
+            icon: "dark_mode",
+            description: Tr.tr("Bar, rain, icons, opacity"),
+            category: "appearance"
+        },
 
         // Connectivity
         // TODO

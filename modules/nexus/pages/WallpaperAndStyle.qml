@@ -189,26 +189,6 @@ PageBase {
             onToggled: GlobalConfig.appearance.transparency.enabled = checked
         }
 
-        SliderRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
-
-            icon: "opacity"
-            label: Tr.tr("Bar and panel opacity")
-            valueLabel: Strings.percentOne(UiPrefs.surfaceOpacity)
-            value: (UiPrefs.surfaceOpacity - 0.3) / 0.7
-            enabled: Colours.transparency.enabled
-            onMoved: v => UiPrefs.setSurfaceOpacity(0.3 + v * 0.7)
-        }
-
-        ToggleRow {
-            Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
-
-            text: Tr.tr("Line icons")
-            subtext: Tr.tr("Thin Phosphor icons instead of Material Symbols")
-            checked: UiPrefs.iconStyle === "phosphor"
-            onToggled: UiPrefs.setIconStyle(checked ? "phosphor" : "material")
-        }
-
         ToggleRow {
             Layout.topMargin: Tokens.spacing.extraSmall / 2 - parent.spacing
 

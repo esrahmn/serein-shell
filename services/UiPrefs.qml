@@ -19,7 +19,10 @@ Singleton {
     readonly property bool barHorizontal: barOnTop || barOnBottom
 
     // Falling rain over the lock screen background
-    readonly property bool lockRain: adapter.lockRain
+    // "weather" (only while it rains outside), "always" or "off"
+    readonly property string rainMode: ["weather", "always", "off"].includes(adapter.rainMode) ? adapter.rainMode : "weather"
+    readonly property bool lockRain: rainMode !== "off"
+    readonly property bool rainVisible: rainMode === "always" || (rainMode === "weather" && Weather.raining)
     // Dashboard tab with live workspace previews
     readonly property bool dashboardOverview: adapter.dashboardOverview
 
@@ -38,8 +41,13 @@ Singleton {
             adapter.iconStyle = style;
     }
 
+    function setRainMode(mode: string): void {
+        if (["weather", "always", "off"].includes(mode))
+            adapter.rainMode = mode;
+    }
+
     function setLockRain(enabled: bool): void {
-        adapter.lockRain = enabled;
+        adapter.rainMode = enabled ? (rainMode === "off" ? "weather" : rainMode) : "off";
     }
 
     function setDashboardOverview(enabled: bool): void {
@@ -64,6 +72,7 @@ Singleton {
 
             property string barPosition: "left"
             property bool lockRain: true
+            property string rainMode: "weather"
             property bool dashboardOverview: true
             property real surfaceOpacity: 0.7
             property string iconStyle: "phosphor"

@@ -2,6 +2,7 @@ import QtQuick
 import Serein.Config
 import qs.components
 import qs.services
+import qs.utils
 
 Item {
     id: root
@@ -55,6 +56,28 @@ Item {
             maximumLineCount: 2
             horizontalAlignment: Text.AlignHCenter
             width: Math.min(implicitWidth, root.parent.width - icon.implicitWidth - info.anchors.leftMargin - Tokens.padding.extraLargeIncreased)
+        }
+
+        // Moon phase of the day
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: Tokens.spacing.small
+
+            MoonDisc {
+                anchors.verticalCenter: parent.verticalCenter
+                implicitWidth: 14
+                implicitHeight: 14
+                illumination: Moon.illumination
+                waxing: Moon.waxing
+                shade: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
+            }
+
+            StyledText {
+                anchors.verticalCenter: parent.verticalCenter
+                text: Moon.name
+                color: Colours.palette.m3onSurfaceVariant
+                font: Tokens.font.label.small
+            }
         }
     }
 }

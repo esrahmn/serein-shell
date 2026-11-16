@@ -180,7 +180,7 @@ WlSessionLockSurface {
     // Fine rain between the blurred background and the lock card; fades with the background
     Rain {
         anchors.fill: parent
-        visible: UiPrefs.lockRain
+        visible: UiPrefs.rainVisible
         opacity: background.opacity
         colour: Colours.palette.m3primary
     }

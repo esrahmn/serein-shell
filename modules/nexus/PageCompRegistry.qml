@@ -39,6 +39,14 @@ QtObject {
                 }
             }
         },
+        Component {
+            // Serein
+            StackPage {
+                Component {
+                    SereinPage {}
+                }
+            }
+        },
 
         // Connectivity
         Component {

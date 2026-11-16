@@ -111,7 +111,14 @@ Item {
                     radius: 1
                     rotation: 14
                     color: root.accent
-                    opacity: 0.07 + (index % 3) * 0.02
+                    visible: opacity > 0
+                    opacity: UiPrefs.rainVisible ? 0.07 + (index % 3) * 0.02 : 0
+
+                    Behavior on opacity {
+                        Anim {
+                            type: Anim.SlowEffects
+                        }
+                    }
                 }
             }
 

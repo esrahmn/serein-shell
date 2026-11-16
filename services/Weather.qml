@@ -23,6 +23,11 @@ Singleton {
     property string pendingCoords
 
     readonly property string icon: cc ? Icons.getWeatherIcon(cc.weatherCode) : "cloud_alert"
+    // Drizzle, rain, showers or thunderstorm (Open-Meteo weather codes)
+    readonly property bool raining: {
+        const code = parseInt(cc?.weatherCode ?? -1);
+        return (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || code >= 95;
+    }
     readonly property string description: cc ? getWeatherCondition(cc.weatherCode) : Tr.tr("No weather")
     readonly property string temp: formatTemp(cc?.tempC)
     readonly property string feelsLike: formatTemp(cc?.feelsLikeC)
