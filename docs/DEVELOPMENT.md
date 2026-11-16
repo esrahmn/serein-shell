@@ -10,6 +10,26 @@ Serein is three repositories that are released together (one tag, one version):
 
 The Arch package `serein-shell` (see `packaging/arch/PKGBUILD`) builds all three from the same `v<version>` tag.
 
+## Workflow at a glance
+
+The three repositories are the source of truth. `/etc/xdg/quickshell/serein` and `/usr` are only where they get
+deployed, and a release just repackages them.
+
+| You changed | Run | Takes effect |
+| --- | --- | --- |
+| Shell QML, assets | `scripts/serein-deploy`, then restart the shell | right away |
+| CLI (Python) | nothing, once `~/.local/bin/serein` links to the checkout (see below) | right away |
+| Plugin (C++) | build, `cmake --install --prefix ~/.local`, set `QML_IMPORT_PATH` (see below) | after a rebuild |
+| Settings (bar position, rain, ...) | Nexus, or edit `serein-ui.json` | live |
+
+Day to day: edit in the repository, deploy, restart, `git commit` and `git push`. Anything that was only deployed
+and never committed is lost on the next package upgrade. When you want to ship or repackage, follow
+[Releasing](#releasing).
+
+`scripts/serein-deploy -n` lists what a deploy would change without touching anything. If you own
+`/etc/xdg/quickshell/serein` (`sudo chown -R $USER /etc/xdg/quickshell/serein` once) the deploy needs no sudo;
+otherwise it asks for it and keeps root as the owner. It copies only files whose content differs.
+
 ## Which copy is running?
 
 Quickshell looks for a config named `serein` in `~/.config/quickshell` first and in `/etc/xdg/quickshell` second,
@@ -20,13 +40,23 @@ qs list --all        # "Config path:" shows the shell.qml in use
 ```
 
 Similarly, a plugin found through `QML_IMPORT_PATH` beats `/usr/lib/qt6/qml/Serein`, and `~/.local/bin` comes before
-`/usr/bin` in `PATH`. Nothing is overridden by default; each loop below turns one override on.
+`/usr/bin` in `PATH`. A fresh package install overrides nothing; the symlink and `QML_IMPORT_PATH` loops below each
+turn one override on, and `scripts/serein-deploy` instead rewrites the packaged shell in place. If something you edited
+does not show up, check which of these is active.
 
 ## Shell (QML)
 
+The usual loop is to deploy the checkout onto the packaged shell:
+
+```sh
+scripts/serein-deploy                            # or put it on your PATH: ln -s $PWD/scripts/serein-deploy ~/.local/bin/
+qs -c serein kill; qs -c serein -d               # restart (config reload is off)
+```
+
+Alternatively run the checkout directly, without touching `/etc`; a dev copy beats the packaged one:
+
 ```sh
 ln -s ~/src/serein-shell ~/.config/quickshell/serein    # use the working copy
-qs -c serein kill; qs -c serein -d                      # restart after editing (config reload is off)
 rm ~/.config/quickshell/serein                          # back to the packaged shell (removes the link only)
 ```
 

@@ -1,0 +1,34 @@
+#!/bin/sh
+# Copy the working tree of serein-shell onto the packaged shell in /etc/xdg/quickshell/serein, so edits made in
+# the git checkout apply without a release.
+#
+#   scripts/serein-deploy       copy, then restart the shell yourself
+#   scripts/serein-deploy -n    only show what would change (compares file contents)
+#
+# If you own /etc/xdg/quickshell/serein the copy runs as you; otherwise it uses sudo and keeps root as the owner.
+# A package upgrade overwrites these files again, which is fine: the repository is the source of truth.
+# Set SEREIN_SRC to deploy a checkout other than the one this script lives in.
+
+set -eu
+
+src="${SEREIN_SRC:-$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)}"
+dest=/etc/xdg/quickshell/serein
+files="assets components modules services utils shell.qml VERSION"
+
+if [ "${1:-}" = "-n" ]; then
+    # shellcheck disable=SC2086
+    (cd "$src" && rsync -rlcn --delete --itemize-changes $files "$dest/")
+    exit 0
+fi
+
+if [ -w "$dest" ]; then
+    # shellcheck disable=SC2086
+    (cd "$src" && rsync -rlc --delete --chmod=D755,F644 $files "$dest/")
+    chmod 755 "$dest/assets/wrap_term_launch.sh"
+else
+    # shellcheck disable=SC2086
+    (cd "$src" && sudo rsync -rlc --delete --chown=root:root --chmod=D755,F644 $files "$dest/")
+    sudo chmod 755 "$dest/assets/wrap_term_launch.sh"
+fi
+echo "deployed $src -> $dest"
+echo "restart the shell to see it: qs -c serein kill; qs -c serein -d"
