@@ -47,6 +47,7 @@ Item {
                 anchors.fill: parent
 
                 icon: Icons.getVolumeIcon(value, root.muted)
+                wavy: true
                 value: root.volume
                 to: GlobalConfig.services.maxVolume
                 onMoved: Audio.setVolume(value)
@@ -72,6 +73,7 @@ Item {
                     anchors.fill: parent
 
                     icon: Icons.getMicVolumeIcon(value, root.sourceMuted)
+                    wavy: true
                     value: root.sourceVolume
                     to: GlobalConfig.services.maxVolume
                     onMoved: Audio.setSourceVolume(value)
@@ -101,6 +103,7 @@ Item {
                     anchors.fill: parent
 
                     icon: `brightness_${(Math.round(value * 6) + 1)}`
+                    moon: true
                     value: root.brightness
                     onMoved: root.monitor?.setBrightness(value)
                 }

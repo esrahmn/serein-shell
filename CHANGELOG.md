@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- OSD: the volume and microphone sliders fill with a moving sine wave, and the brightness
+  handle shows a moon whose phase follows the brightness.
+- New `scripts/restart`: restarts the shell, shows the errors if it does not load, and falls back to the last copy that
+  worked (kept in `~/.cache/serein/last-good`), so a mistake never leaves you without a bar.
+- Left/right bar now matches the top/bottom one: the workspace pill collapses to the focused workspace and expands on
+  hover, the window title sits right below it, the clock is centred and the tray sits next to the status icons.
+- Fix: `drawers list` / `isOpen` no longer fail when there is no active monitor.
+
 ## 0.2.0
 
 **Dashboard**

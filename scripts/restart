@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Restarts the shell and makes sure you are never left without one.
+#
+# - starts the shell and waits until it says it loaded (or failed)
+# - if it loaded, it keeps a copy of this working tree as "last known good"
+# - if it failed, it prints the errors and starts the last known good copy instead, so the bar and panels keep working
+#
+# Usage: scripts/restart [shell folder]      (default: the folder this script lives in)
+
+set -u
+
+REPO=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
+DIR=${1:-$REPO}
+GOOD="${XDG_CACHE_HOME:-$HOME/.cache}/serein/last-good"
+RT=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+WAIT=${RESTART_SECONDS:-15}
+
+command -v qs >/dev/null || { echo "restart: 'qs' not found" >&2; exit 2; }
+[ -f "$DIR/shell.qml" ] || { echo "restart: no shell.qml in $DIR" >&2; exit 2; }
+
+stop_all() {
+    qs -p "$DIR/shell.qml" kill >/dev/null 2>&1
+    qs -p "$REPO/shell.qml" kill >/dev/null 2>&1
+    [ -f "$GOOD/shell.qml" ] && qs -p "$GOOD/shell.qml" kill >/dev/null 2>&1
+    sleep 0.8
+}
+
+start() { setsid -f env -u QML_IMPORT_PATH qs -p "$1/shell.qml" -d >/dev/null 2>&1; }
+
+# Newest log written after $1 (a marker file)
+newest_log() { find "$RT/quickshell/by-id" -name log.log -newer "$1" 2>/dev/null | head -1; }
+
+wait_for_load() { # $1 = marker; prints "ok" or "failed"
+    local log
+    for _ in $(seq 1 $((WAIT * 4))); do
+        sleep 0.25
+        log=$(newest_log "$1")
+        [ -n "$log" ] || continue
+        if grep -q 'Configuration Loaded' "$log"; then echo ok; return; fi
+        if grep -q 'Failed to load configuration' "$log"; then echo failed; return; fi
+    done
+    echo failed
+}
+
+save_good() {
+    mkdir -p "$GOOD"
+    if command -v rsync >/dev/null; then
+        rsync -a --delete --exclude .git "$DIR"/ "$GOOD"/
+    else
+        rm -rf "${GOOD:?}"/* && cp -a "$DIR"/. "$GOOD"/ && rm -rf "$GOOD/.git"
+    fi
+}
+
+stop_all
+marker=$(mktemp)
+start "$DIR"
+result=$(wait_for_load "$marker")
+
+if [ "$result" = ok ]; then
+    save_good
+    echo "restart: the shell loaded"
+    rm -f "$marker"
+    exit 0
+fi
+
+# It did not load: show why, then bring back the last good copy
+echo "restart: THE SHELL DID NOT LOAD" >&2
+log=$(newest_log "$marker")
+[ -n "$log" ] && grep -E 'ERROR|caused by' "$log" | head -15 >&2
+rm -f "$marker"
+
+if [ -f "$GOOD/shell.qml" ]; then
+    echo "restart: starting the last known good copy so you still have a shell ($GOOD)" >&2
+    marker=$(mktemp)
+    start "$GOOD"
+    [ "$(wait_for_load "$marker")" = ok ] && echo "restart: fallback is running" >&2 || echo "restart: the fallback did not load either" >&2
+    rm -f "$marker"
+else
+    echo "restart: no last known good copy yet (it is saved after the first successful restart)" >&2
+fi
+exit 1

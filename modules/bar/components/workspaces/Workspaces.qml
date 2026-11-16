@@ -55,6 +55,21 @@ StyledClippingRect {
 
     property real blur: onSpecial ? 1 : 0
 
+    // Collapsed: only the focused workspace is shown; hovering the pill expands it to all of them
+    readonly property bool expanded: hover.hovered
+    property real progress: expanded ? 1 : 0
+    readonly property bool settled: progress === 0 || progress === 1
+
+    Behavior on progress {
+        Anim {
+            type: Anim.Standard
+        }
+    }
+
+    HoverHandler {
+        id: hover
+    }
+
     function workspaceIndex(id: int): int {
         if (!Config.bar.workspaces.showUnoccupied)
             return wsIds.indexOf(id);
@@ -113,7 +128,7 @@ StyledClippingRect {
             anchors.margins: Tokens.padding.extraSmall
             implicitHeight: contentHeight
 
-            spacing: Tokens.spacing.extraSmall
+            spacing: Tokens.spacing.extraSmall * root.progress
             removeDuration: Tokens.anim.durations.expressiveDefaultEffects
 
             model: ScriptModel {
@@ -122,6 +137,8 @@ StyledClippingRect {
 
             delegate: Workspace {
                 activeWsId: root.activeWsId
+                expand: root.progress
+                settled: root.settled
                 ws: Config.bar.workspaces.showUnoccupied ? root.groupOffset + index + 1 : modelData
                 monitor: root.monitor
 
@@ -172,6 +189,8 @@ StyledClippingRect {
         MouseArea {
             anchors.fill: workspaces
             onClicked: event => {
+                if (!root.expanded)
+                    return;
                 const ws = (workspaces.itemAt(event.x, event.y) as Workspace)?.ws;
                 if (!ws)
                     return;
@@ -237,6 +256,8 @@ StyledClippingRect {
     }
 
     Behavior on implicitHeight {
+        enabled: root.settled
+
         Anim {}
     }
 }

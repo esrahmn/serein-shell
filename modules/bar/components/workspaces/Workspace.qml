@@ -59,16 +59,23 @@ Item {
             shape.shape = Qt.binding(() => isOccupied ? MaterialShape.Square : MaterialShape.Circle);
     }
 
+    // 0 collapsed (only the focused workspace shows), 1 expanded; `settled` is true when it is not moving
+    property real expand: 1
+    property bool settled: true
+    readonly property real shown: focused ? 1 : expand
+
     anchors.horizontalCenter: parent?.horizontalCenter
-    LazyListView.preferredHeight: LazyListView.removing ? 0 : layout.implicitHeight + (hasWindows ? Tokens.padding.extraSmall : 0)
+    LazyListView.preferredHeight: LazyListView.removing ? 0 : (layout.implicitHeight + (hasWindows ? Tokens.padding.extraSmall : 0)) * shown
     LazyListView.visibleHeight: LazyListView.preferredHeight
 
-    opacity: LazyListView.removing || LazyListView.adding ? 0 : 1
+    opacity: LazyListView.removing || LazyListView.adding ? 0 : shown
 
     onFocusedChanged: updateShape()
     Component.onCompleted: updateShape()
 
     Behavior on LazyListView.visibleHeight {
+        enabled: root.settled
+
         Anim {}
     }
 

@@ -18,6 +18,8 @@ ColumnLayout {
     required property BarPopouts.Wrapper popouts
     required property bool fullscreen
     readonly property int vPadding: Tokens.padding.large
+    // Height of the centred clock, so the window title knows where to stop
+    property real clockHeight
 
     function closeTray(): void {
         if (!Config.bar.tray.compact)
@@ -132,6 +134,9 @@ ColumnLayout {
             DelegateChoice {
                 roleValue: "spacer"
                 delegate: EntryWrapper {
+                    // No gap between the workspaces and the window title: the title sits right below them
+                    // and follows the workspace pill as it expands
+                    visible: repeater.model.values[index + 1]?.id !== "activeWindow"
                     Layout.fillHeight: true
                 }
             }
@@ -174,8 +179,18 @@ ColumnLayout {
             DelegateChoice {
                 roleValue: "clock"
                 delegate: EntryWrapper {
+                    id: clockEntry
+
+                    // Takes no space in the column: the clock sits in the exact centre of the bar, so the tray
+                    // ends up right next to the status icons
+                    Layout.preferredHeight: 0
+                    Layout.topMargin: -root.spacing * 1.75
+
                     Clock {
                         objectName: "taskbarClock"
+                        y: (root.height - height) / 2 - clockEntry.y
+                        onHeightChanged: root.clockHeight = height
+                        Component.onCompleted: root.clockHeight = height
                     }
                 }
             }

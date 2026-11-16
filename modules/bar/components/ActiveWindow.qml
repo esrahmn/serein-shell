@@ -31,7 +31,10 @@ Item {
         const otherModules = bar.children.filter(c => c.entryId && c.item !== this && c.entryId !== "spacer");
         const otherHeight = otherModules.reduce((acc, curr) => acc + (curr.item.nonAnimHeight ?? curr.height), 0);
         // Length - 2 cause repeater counts as a child
-        return bar.height - otherHeight - bar.spacing * (bar.children.length - 1) - bar.vPadding * 2;
+        const fits = bar.height - otherHeight - bar.spacing * (bar.children.length - 1) - bar.vPadding * 2;
+        // ... and it stops before the centred clock
+        const beforeClock = bar.height / 2 - bar.clockHeight / 2 - Tokens.spacing.large - (parent?.y ?? 0);
+        return Math.max(0, Math.min(fits, beforeClock));
     }
     property Title current: text1
 
