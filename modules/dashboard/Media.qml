@@ -59,7 +59,8 @@ Item {
 
     Timer {
         running: Players.active?.isPlaying ?? false
-        interval: GlobalConfig.dashboard.mediaUpdateInterval
+        // Fast polling keeps the lyrics in step with the singing (the default 500 ms made them lag half a second)
+        interval: Math.min(GlobalConfig.dashboard.mediaUpdateInterval, 250)
         triggeredOnStart: true
         repeat: true
         onTriggered: Players.active?.positionChanged()

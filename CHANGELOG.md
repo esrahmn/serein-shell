@@ -12,6 +12,12 @@
   hover, the window title sits right below it, the clock is centred and the tray sits next to the status icons.
 - Fix: the control center showed "AC, No battery" on laptops (a property named `onBattery` clashed with QML's signal
   handler naming); it now shows the real level and charging time.
+- Media tab lyrics scroll themselves: the current line is eased to the middle every time it changes (the built-in
+  highlight range gave up when the current line grew while it was moving, so the lyrics stopped following).
+- Media tab lyrics: the playback position is re-based on every report from the player and moved forward by the clock in
+  between, so the lyrics follow the singing smoothly instead of lagging behind the (jittery) reported position.
+- The control center no longer opens on hover: click the status icons in the bar, or press Super + N (global shortcut
+  `controlcenter`). Hovering the status icons just closes any other popout.
 - Fix: popouts now stay joined to the screen border while they grow or shrink when they sit at the far end of the bar
   (switching between the control center and a tray menu used to let the panel come loose from the border).
 - Fix: switching between two popouts (e.g. control center and a tray menu) is smooth in both directions: the old content

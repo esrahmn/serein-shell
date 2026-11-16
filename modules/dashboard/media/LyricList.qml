@@ -27,6 +27,54 @@ Item {
     // Centred lines, the current one big (the media tab); otherwise left aligned and small
     property bool karaoke: false
     readonly property real fadeAmount: 0.1
+
+    // The player only reports its position every so often (and Spotify's is jittery), so the position is
+    // re-based on every report and moved forward by the clock in between. The lyrics then follow the singing
+    // smoothly instead of in steps tied to the polling.
+    property real basePos
+    property real baseTime: Date.now()
+    property real smoothPos
+
+    function rebase(): void {
+        const p = Players.active?.position ?? 0;
+        const now = Date.now();
+        const expected = basePos + (Players.active?.isPlaying ? (now - baseTime) / 1000 : 0);
+        // Ignore small backward jitter while playing; real seeks (bigger jumps) are followed
+        if (!Players.active?.isPlaying || Math.abs(p - expected) > 0.35 || p > expected) {
+            basePos = p;
+            baseTime = now;
+        }
+        smoothPos = basePos + (Players.active?.isPlaying ? (now - baseTime) / 1000 : 0);
+    }
+
+    Connections {
+        function onPositionChanged(): void {
+            root.rebase();
+        }
+
+        function onIsPlayingChanged(): void {
+            root.basePos = Players.active?.position ?? 0;
+            root.baseTime = Date.now();
+            root.rebase();
+        }
+
+        target: Players.active
+    }
+
+    Connections {
+        function onActiveChanged(): void {
+            root.basePos = Players.active?.position ?? 0;
+            root.baseTime = Date.now();
+            root.rebase();
+        }
+
+        target: Players
+    }
+
+    FrameAnimation {
+        running: root.visible && (Players.active?.isPlaying ?? false)
+        onTriggered: root.smoothPos = root.basePos + (Date.now() - root.baseTime) / 1000
+    }
     property bool flag
     property list<string> lyricList: Lyrics.lyrics
 
@@ -244,17 +292,54 @@ Item {
         Component.onCompleted: {
             currentIndex = Qt.binding(() => {
                 model; // Force update when lyrics change
-                return Lyrics.indexForTime(Players.active?.position ?? 0);
+                return Lyrics.indexForTime(root.smoothPos);
             });
             positionViewAtIndex(currentIndex, ListView.Center);
         }
         onModelChanged: Qt.callLater(() => positionViewAtIndex(currentIndex, ListView.Center))
 
-        highlightRangeMode: ListView.ApplyRange
-        highlightMoveDuration: Tokens.anim.durations.large
-        highlightMoveVelocity: -1
-        preferredHighlightBegin: (height - (currentItem?.implicitHeight ?? 0)) / 2
-        preferredHighlightEnd: (height + (currentItem?.implicitHeight ?? 0)) / 2
+        // The list scrolls itself: the current line is eased to the middle whenever it changes (or changes size or
+        // position, since the current line is bigger than the rest). The built-in highlight range gave up when the
+        // line grew while it was moving.
+        function scrollToCurrent(jump: bool): void {
+            const item = currentItem;
+            if (!item)
+                return;
+            const target = Math.max(originY, item.y + item.height / 2 - height / 2);
+            scrollAnim.stop();
+            if (jump || Math.abs(target - contentY) > height * 2) {
+                contentY = target;
+                return;
+            }
+            scrollAnim.to = target;
+            scrollAnim.start();
+        }
+
+        onCurrentIndexChanged: Qt.callLater(() => scrollToCurrent(false))
+        onHeightChanged: Qt.callLater(() => scrollToCurrent(true))
+
+        Connections {
+            function onYChanged(): void {
+                Qt.callLater(() => lyrics.scrollToCurrent(false));
+            }
+
+            function onHeightChanged(): void {
+                Qt.callLater(() => lyrics.scrollToCurrent(false));
+            }
+
+            target: lyrics.currentItem
+        }
+
+        NumberAnimation {
+            id: scrollAnim
+
+            target: lyrics
+            property: "contentY"
+            duration: Tokens.anim.durations.normal
+            easing.type: Easing.OutCubic
+        }
+
+        highlightRangeMode: ListView.NoHighlightRange
 
         spacing: Tokens.spacing.small
         opacity: 0

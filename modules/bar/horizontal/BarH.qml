@@ -66,8 +66,11 @@ RowLayout {
 
         const id = ch.entryId;
 
-        if (id === "statusIcons" && Config.bar.popouts.statusIcons) {
-            openControlCenter();
+        if (id === "statusIcons") {
+            // The control center opens on click (or its shortcut), never on hover. An open control center stays;
+            // any other popout closes, since the status icons have none of their own.
+            if (!(popouts.hasCurrent && popouts.currentName === "controlcenter"))
+                popouts.hasCurrent = false;
         } else if (id === "tray" && Config.bar.popouts.tray) {
             const tray = ch.item as HTray;
             // Compact tray: hovering the collapsed tray expands it; popouts only work on the revealed icons
