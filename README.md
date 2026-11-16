@@ -48,6 +48,24 @@ settings app) and adds its own identity and a few features on top.
 
 ## Install
 
+### Arch Linux (one package)
+
+`packaging/arch/PKGBUILD` builds a single package, `serein-shell`, that contains the shell, `serein-plugin` and
+`serein-cli` (all taken from the `v0.1.0` tags, so they stay in step):
+
+```sh
+git clone https://github.com/esrahmn/serein-shell
+cd serein-shell/packaging/arch
+makepkg -si
+```
+
+It installs the shell to `/etc/xdg/quickshell/serein`, the plugin to `/usr/lib/qt6/qml/Serein` and `serein` to
+`/usr/bin`, so no `QML_IMPORT_PATH` is needed. Start the shell with `qs -c serein`. (A copy in
+`~/.config/quickshell/serein` takes precedence over the packaged one.) `serein-shell` depends on
+`qt6-m3shapes-git` from the AUR.
+
+### By hand
+
 1. Build and install the plugin (user-level, no root needed):
 
    ```sh

@@ -3,9 +3,9 @@
 # One package for all of Serein: the shell (QML), serein-plugin (native Qt/QML modules) and serein-cli.
 # The three repositories are tagged together, so one pkgver covers them.
 #
-# Note: the AUR already has an unrelated package called "serein" (a Discord client). That is why this one is
-# "serein-shell". The CLI installs /usr/bin/serein; if that Discord client also ships /usr/bin/serein, the two
-# cannot be installed side by side.
+# Note: the AUR already has an unrelated package called "serein" (a Discord client), which is why this one is
+# "serein-shell". The CLI installs /usr/bin/serein, which that client most likely uses as well, so the two are
+# declared as conflicting (see conflicts= below).
 
 pkgname=serein-shell
 pkgver=0.1.0
@@ -14,6 +14,7 @@ pkgdesc='Quickshell desktop shell for Hyprland (fork of Caelestia): shell, nativ
 arch=('x86_64')
 url='https://github.com/esrahmn/serein-shell'
 license=('GPL-3.0-only')
+conflicts=('serein')
 depends=(
     # shell
     'quickshell'

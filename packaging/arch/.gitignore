@@ -1,0 +1,5 @@
+# build artefacts from makepkg
+/src/
+/pkg/
+*.pkg.tar.*
+*.log
