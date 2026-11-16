@@ -16,6 +16,11 @@ settings app) and adds its own identity and a few features on top.
 
 *The lock screen, with the falling rain and the compact media card.*
 
+![Serein dashboard, Workspaces tab: a grid of workspaces with live previews of their windows, on a top bar](docs/screenshots/workspaces.webp)
+
+*The Workspaces tab of the dashboard (here with the bar on the top edge): live previews of every workspace.
+Click a workspace or a window to jump to it, or drag a window onto another workspace to move it.*
+
 ## What is different from Caelestia
 
 - **Branding**: Serein name, logo (crescent moon and rain, drawn as vectors so it follows the theme colours),
