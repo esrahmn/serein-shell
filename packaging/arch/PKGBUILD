@@ -1,0 +1,109 @@
+# Maintainer: esra
+
+# One package for all of Serein: the shell (QML), serein-plugin (native Qt/QML modules) and serein-cli.
+# The three repositories are tagged together, so one pkgver covers them.
+#
+# Note: the AUR already has an unrelated package called "serein" (a Discord client). That is why this one is
+# "serein-shell". The CLI installs /usr/bin/serein; if that Discord client also ships /usr/bin/serein, the two
+# cannot be installed side by side.
+
+pkgname=serein-shell
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Quickshell desktop shell for Hyprland (fork of Caelestia): shell, native plugin and CLI'
+arch=('x86_64')
+url='https://github.com/esrahmn/serein-shell'
+license=('GPL-3.0-only')
+depends=(
+    # shell
+    'quickshell'
+    'qt6-base'
+    'qt6-declarative'
+    'qt6-imageformats'
+    'qt6-multimedia'
+    'qt6-m3shapes-git'
+    'ttf-material-symbols-variable'
+    'ttf-rubik-vf'
+    'ttf-cascadia-code-nerd'
+    'bash'
+    'fish'
+    # serein-plugin
+    'glibc'
+    'gcc-libs'
+    'ddcutil'
+    'brightnessctl'
+    'libcava'
+    'networkmanager'
+    'lm_sensors'
+    'aubio'
+    'libpipewire'
+    'libqalculate'
+    'power-profiles-daemon'
+    # serein-cli
+    'python'
+    'python-pillow'
+    'python-materialyoucolor'
+    'libnotify'
+    'swappy'
+    'grim'
+    'slurp'
+    'dart-sass'
+    'wl-clipboard'
+    'gpu-screen-recorder'
+    'dconf'
+    'cliphist'
+    'fuzzel'
+    'git'
+)
+makedepends=(
+    'cmake'
+    'ninja'
+    'pkgconf'
+    'qt6-shadertools'
+    'python-build'
+    'python-installer'
+    'python-hatchling'
+    'python-hatch-vcs'
+)
+source=(
+    "serein-shell::git+https://github.com/esrahmn/serein-shell.git#tag=v${pkgver}"
+    "serein-plugin::git+https://github.com/esrahmn/serein-plugin.git#tag=v${pkgver}"
+    "serein-cli::git+https://github.com/esrahmn/serein-cli.git#tag=v${pkgver}"
+)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+build() {
+    # serein-plugin: native QML modules (Serein.*) and the small version helper
+    cmake -S serein-plugin -B build-plugin -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DVERSION="${pkgver}" \
+        -DGIT_REVISION="$(git -C serein-plugin rev-parse HEAD)"
+    cmake --build build-plugin
+
+    # serein-cli: Python wheel (the version would come from a git tag; pin it explicitly)
+    cd serein-cli
+    SETUPTOOLS_SCM_PRETEND_VERSION="${pkgver}" python -m build --wheel --no-isolation
+}
+
+package() {
+    # serein-plugin -> /usr/lib/qt6/qml/Serein, /usr/lib/serein/version
+    DESTDIR="${pkgdir}" cmake --install build-plugin
+
+    # serein-cli -> /usr/bin/serein
+    cd "${srcdir}/serein-cli"
+    python -m installer --destdir="${pkgdir}" dist/*.whl
+    install -Dm644 completions/serein.fish "${pkgdir}/usr/share/fish/vendor_completions.d/serein.fish"
+
+    # serein-shell -> /etc/xdg/quickshell/serein (run with: qs -c serein)
+    cd "${srcdir}/serein-shell"
+    local dest="${pkgdir}/etc/xdg/quickshell/serein"
+    install -d "${dest}"
+    cp -r assets components modules services utils "${dest}/"
+    install -m644 shell.qml VERSION "${dest}/"
+    chmod 755 "${dest}/assets/wrap_term_launch.sh"
+
+    install -Dm755 scripts/migrate-from-caelestia.sh "${pkgdir}/usr/share/serein/migrate-from-caelestia.sh"
+    install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
