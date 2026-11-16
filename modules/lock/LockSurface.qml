@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
 import Quickshell.Wayland
-import Caelestia.Config
+import Serein.Config
 import qs.components
 import qs.components.effects
 import qs.components.images

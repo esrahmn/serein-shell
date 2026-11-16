@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia
-import Caelestia.Config
-import Caelestia.I18n
+import Serein
+import Serein.Config
+import Serein.I18n
 import qs.components
 import qs.components.effects
 import qs.services

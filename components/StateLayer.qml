@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
-import Caelestia
-import Caelestia.Config
+import Serein
+import Serein.Config
 import qs.services
 
 MouseArea {

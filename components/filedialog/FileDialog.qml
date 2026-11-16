@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.I18n
+import Serein.I18n
 import qs.components
 import qs.services
 

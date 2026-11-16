@@ -5,8 +5,8 @@ import Quickshell
 import Quickshell.Io
 import qs.utils
 
-// Serein's own UI preferences. The caelestia config plugin is fixed, so settings it has no
-// field for (like the bar position) live in their own small JSON file next to the shell state.
+// Serein's own UI preferences. Settings that are not part of the plugin's config schema (like the bar position and the
+// lock rain) live in their own small JSON file next to the shell state.
 Singleton {
     id: root
 

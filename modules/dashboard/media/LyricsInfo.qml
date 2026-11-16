@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
-import Caelestia
-import Caelestia.Blobs
-import Caelestia.Config
-import Caelestia.I18n
-import Caelestia.Services
+import Serein
+import Serein.Blobs
+import Serein.Config
+import Serein.I18n
+import Serein.Services
 import qs.components
 import qs.services
 

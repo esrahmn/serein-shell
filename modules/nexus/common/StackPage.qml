@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import Caelestia.Config
+import Serein.Config
 import qs.components
 import qs.modules.nexus
 

@@ -5,7 +5,7 @@ import "../components"
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Caelestia.Config
+import Serein.Config
 import qs.components
 import qs.services
 

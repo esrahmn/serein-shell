@@ -2,9 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Caelestia
-import Caelestia.Config
-import Caelestia.I18n
+import Serein
+import Serein.Config
+import Serein.I18n
 import qs.components
 import qs.services
 import qs.utils
@@ -127,6 +127,11 @@ PageBase {
             first: true
             label: Tr.trCtx("Shell", "the serein shell itself, not a unix shell")
             value: Version.serein + (Version.revision ? ` (${Version.revision})` : "")
+        }
+
+        InfoRow {
+            label: Tr.tr("Plugin")
+            value: Version.plugin || "…"
         }
 
         InfoRow {

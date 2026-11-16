@@ -6,8 +6,8 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import Quickshell.Widgets
-import Caelestia.Config
-import Caelestia.I18n
+import Serein.Config
+import Serein.I18n
 import qs.components
 import qs.services
 import qs.utils

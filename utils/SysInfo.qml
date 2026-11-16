@@ -3,8 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia.Config
-import Caelestia.I18n
+import Serein.Config
+import Serein.I18n
 import qs.utils
 
 Singleton {

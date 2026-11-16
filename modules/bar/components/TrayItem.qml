@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell.Services.SystemTray
-import Caelestia.Config
+import Serein.Config
 import qs.components.effects
 import qs.services
 import qs.utils

@@ -5,7 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
-import Caelestia.Config
+import Serein.Config
 import qs.components
 import qs.services
 import qs.utils

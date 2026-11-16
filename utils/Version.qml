@@ -3,16 +3,19 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Caelestia
+import Serein
 
-// Serein's own version, read from the VERSION file at the repo root, plus the caelestia release it is
-// based on (the plugin version). The git revision is shown when the config lives in a git checkout.
+// Serein's own version, read from the VERSION file at the repo root, the serein-plugin version it runs on,
+// and the caelestia release the project was forked from. The git revision is shown when the config lives
+// in a git checkout.
 Singleton {
     id: root
 
     readonly property string serein: versionFile.text().trim() || "dev"
-    // Version of the caelestia shell/plugin this fork is built on
-    readonly property string caelestiaBase: CUtils.version
+    // Version of serein-plugin (the native Serein.* QML modules)
+    readonly property string plugin: CUtils.version
+    // The caelestia release this project was forked from
+    readonly property string caelestiaBase: "2.5.0"
     property string revision
 
     FileView {

@@ -1,6 +1,6 @@
 import "../effects"
 import QtQuick
-import Caelestia.Config
+import Serein.Config
 import qs.components
 import qs.services
 

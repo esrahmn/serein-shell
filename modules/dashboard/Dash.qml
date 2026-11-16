@@ -1,6 +1,6 @@
 import "dash"
 import QtQuick.Layouts
-import Caelestia.Config
+import Serein.Config
 import qs.components
 import qs.components.filedialog
 import qs.services

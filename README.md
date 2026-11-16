@@ -35,29 +35,56 @@ settings app) and adds its own identity and a few features on top.
 
 ## Requirements
 
-Serein reuses Caelestia's compiled plugin (the `Caelestia.*` QML modules) instead of shipping its own, so you
-need Caelestia's shell package installed alongside it, with its dependencies:
-
 - Hyprland (the Lua config API is used for some dispatchers; legacy dispatch strings are used as a fallback)
-- `quickshell` (a recent build; Caelestia tracks `quickshell-git`)
-- `caelestia-shell` **2.5.0**: provides the plugin in `/usr/lib/qt6/qml/Caelestia`
-- [`serein-cli`](https://github.com/esrahmn/serein-cli) (a fork of `caelestia-cli`): used for wallpapers, colour
-  schemes, recording, the clipboard and emoji pickers, and for talking to the running shell (`serein shell ...`).
+- `quickshell` (a recent build; `quickshell-git` is what Serein is developed against)
+- [`serein-plugin`](https://github.com/esrahmn/serein-plugin): the native Qt/QML modules (`Serein.Config`,
+  `Serein.Services`, `Serein.Blobs`, ...), a fork of Caelestia's plugin
+- [`serein-cli`](https://github.com/esrahmn/serein-cli) (a fork of `caelestia-cli`): wallpapers, colour schemes,
+  recording, the clipboard and emoji pickers, and a handle on the running shell (`serein shell ...`).
   Install it so `serein` is on your `PATH`; see its README
-
-**Pin `caelestia-shell`.** Serein's QML is written against plugin version 2.5.0. If the package updates and the
-plugin API changes, Serein can break while stock Caelestia keeps working. On Arch, add it to `IgnorePkg` in
-`/etc/pacman.conf`, and compare against the new upstream release before updating.
+- The runtime dependencies of the plugin: `ddcutil`, `brightnessctl`, `libcava`, `networkmanager`, `lm_sensors`,
+  `aubio`, `libpipewire`, `libqalculate`, `power-profiles-daemon`, `qt6-m3shapes`, and the Material Symbols,
+  Rubik and Cascadia Code Nerd fonts
 
 ## Install
 
+1. Build and install the plugin (user-level, no root needed):
+
+   ```sh
+   git clone https://github.com/esrahmn/serein-plugin ~/src/serein-plugin
+   cd ~/src/serein-plugin
+   cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.0 -DGIT_REVISION="$(git rev-parse HEAD)"
+   cmake --build build
+   cmake --install build --prefix ~/.local
+   ```
+
+   Qt must be told where it lives. In a Hyprland Lua config: `hl.env("QML_IMPORT_PATH", HOME .. "/.local/lib/qt6/qml")`
+   (or export `QML_IMPORT_PATH=$HOME/.local/lib/qt6/qml` before starting `qs`). A system-wide install
+   (`--prefix /usr`) needs no variable.
+
+2. Install [`serein-cli`](https://github.com/esrahmn/serein-cli) so `serein` is on your `PATH`.
+
+3. Get the shell and start it:
+
+   ```sh
+   git clone https://github.com/esrahmn/serein-shell ~/.config/quickshell/serein
+   qs -c serein
+   ```
+
+   To start it with Hyprland, run `qs -c serein` from your autostart (for example
+   `hl.exec_cmd("qs -c serein")` in a Lua config). Do not run it at the same time as the stock Caelestia shell:
+   they would draw over each other.
+
+### Coming from Caelestia
+
+Serein reads and writes `~/.config/serein`, `~/.local/state/serein`, `~/.local/share/serein` and `~/.cache/serein`.
+To bring your existing settings, colour scheme and wallpaper over, run once:
+
 ```sh
-git clone https://github.com/esrahmn/serein-shell ~/.config/quickshell/serein
-qs -c serein
+sh ~/.config/quickshell/serein/scripts/migrate-from-caelestia.sh
 ```
 
-To start it with Hyprland, run `qs -c serein` from your autostart (for example `hl.exec_cmd("qs -c serein")` in a
-Lua config). Do not run it at the same time as the stock Caelestia shell: they would draw over each other.
+It only copies (never moves or deletes), so the Caelestia install keeps working.
 
 ## Keybinds
 
@@ -79,8 +106,8 @@ target (`drawers`, `lock`, `nexus`, `notifs`, `mpris`, `audio`, `wallpaper`, ...
 
 | File | What it holds |
 | --- | --- |
-| `~/.config/caelestia/shell.json` | Caelestia's own settings (same format and location as upstream, deliberately: the plugin and the CLI read it) |
-| `~/.local/state/caelestia/serein-ui.json` | Serein's own settings, which the Caelestia config has no field for |
+| `~/.config/serein/shell.json` | Shell settings read by the plugin (same format as Caelestia's `shell.json`) |
+| `~/.local/state/serein/serein-ui.json` | Serein's own UI settings, which the plugin schema has no field for |
 
 `serein-ui.json` keys (all editable from Nexus; the file is watched, so changes apply live):
 

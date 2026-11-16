@@ -4,8 +4,8 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import M3Shapes
-import Caelestia
-import Caelestia.Config
+import Serein
+import Serein.Config
 import qs.components
 import qs.services
 import qs.utils

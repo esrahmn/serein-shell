@@ -3,9 +3,9 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Shapes
-import Caelestia
-import Caelestia.Config
-import Caelestia.I18n
+import Serein
+import Serein.Config
+import Serein.I18n
 import qs.components
 import qs.components.controls
 import qs.components.effects

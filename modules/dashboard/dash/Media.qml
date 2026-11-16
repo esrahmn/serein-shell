@@ -1,10 +1,10 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Caelestia.Components
-import Caelestia.Config
-import Caelestia.I18n
-import Caelestia.Services
+import Serein.Components
+import Serein.Config
+import Serein.I18n
+import Serein.Services
 import qs.components
 import qs.components.controls
 import qs.components.widgets
