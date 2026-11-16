@@ -36,14 +36,14 @@ PageBase {
             }
         }
 
-        // Parsed from the caelestia CLI's package listing; the sh wrapper avoids a
-        // warning when the (optional) CLI isn't installed
+        // Parsed from the serein CLI's package listing; the sh wrapper avoids a
+        // warning when the CLI isn't installed
         Process {
             running: true
-            command: ["sh", "-c", "caelestia --version 2>/dev/null"]
+            command: ["sh", "-c", "serein --version 2>/dev/null"]
             stdout: StdioCollector {
                 onStreamFinished: {
-                    const m = text.match(/caelestia-cli\S*\s+(\d+(?:\.\d+)*)/);
+                    const m = text.match(/serein-cli\S*\s+(\S+)/);
                     root.cliVersion = m ? m[1] : "";
                 }
             }

@@ -33,7 +33,9 @@ need Caelestia's shell package installed alongside it, with its dependencies:
 - Hyprland (the Lua config API is used for some dispatchers; legacy dispatch strings are used as a fallback)
 - `quickshell` (a recent build; Caelestia tracks `quickshell-git`)
 - `caelestia-shell` **2.5.0**: provides the plugin in `/usr/lib/qt6/qml/Caelestia`
-- `caelestia-cli`: used for wallpapers, colour schemes, recording, the clipboard and emoji pickers
+- [`serein-cli`](https://github.com/esrahmn/serein-cli) (a fork of `caelestia-cli`): used for wallpapers, colour
+  schemes, recording, the clipboard and emoji pickers, and for talking to the running shell (`serein shell ...`).
+  Install it so `serein` is on your `PATH`; see its README
 
 **Pin `caelestia-shell`.** Serein's QML is written against plugin version 2.5.0. If the package updates and the
 plugin API changes, Serein can break while stock Caelestia keeps working. On Arch, add it to `IgnorePkg` in

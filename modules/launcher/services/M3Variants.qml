@@ -80,7 +80,7 @@ Searcher {
 
         function onClicked(list: AppList): void {
             list.screenState.launcher = false;
-            Quickshell.execDetached(["caelestia", "scheme", "set", "-v", variant]);
+            Quickshell.execDetached(["serein", "scheme", "set", "-v", variant]);
         }
     }
 }
