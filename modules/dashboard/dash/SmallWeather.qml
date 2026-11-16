@@ -69,7 +69,6 @@ Item {
                 implicitHeight: 14
                 illumination: Moon.illumination
                 waxing: Moon.waxing
-                shade: Colours.layer(Colours.palette.m3surfaceContainerHigh, 2)
             }
 
             StyledText {

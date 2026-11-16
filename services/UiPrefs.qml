@@ -46,6 +46,14 @@ Singleton {
             adapter.rainMode = mode;
     }
 
+    // How a new wallpaper replaces the old one: "moon", "wave", "rain" or "fade"
+    readonly property string wallpaperTransition: ["moon", "wave", "rain", "fade"].includes(adapter.wallpaperTransition) ? adapter.wallpaperTransition : "moon"
+
+    function setWallpaperTransition(kind: string): void {
+        if (["moon", "wave", "rain", "fade"].includes(kind))
+            adapter.wallpaperTransition = kind;
+    }
+
     function setLockRain(enabled: bool): void {
         adapter.rainMode = enabled ? (rainMode === "off" ? "weather" : rainMode) : "off";
     }
@@ -76,6 +84,7 @@ Singleton {
             property bool dashboardOverview: true
             property real surfaceOpacity: 0.7
             property string iconStyle: "phosphor"
+            property string wallpaperTransition: "moon"
         }
     }
 }

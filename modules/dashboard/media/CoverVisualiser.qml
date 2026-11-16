@@ -16,6 +16,7 @@ Item {
     readonly property real centerX: width / 2
     readonly property real centerY: height / 2
     readonly property real spacing: Tokens.spacing.medium
+    property real coverSize: Tokens.sizes.dashboard.mediaCoverArtSize
     readonly property real maxMagnitude: (implicitWidth - cover.implicitWidth) / 2 - spacing
 
     ServiceRef {
@@ -76,7 +77,7 @@ Item {
 
         anchors.centerIn: parent
         shape.shape: MaterialShape.Cookie9Sided
-        implicitWidth: Tokens.sizes.dashboard.mediaCoverArtSize
-        implicitHeight: Tokens.sizes.dashboard.mediaCoverArtSize
+        implicitWidth: root.coverSize
+        implicitHeight: root.coverSize
     }
 }

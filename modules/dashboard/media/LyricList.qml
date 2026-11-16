@@ -24,6 +24,8 @@ Item {
             Lyrics.clearTrack();
     }
 
+    // Centred lines, the current one big (the media tab); otherwise left aligned and small
+    property bool karaoke: false
     readonly property real fadeAmount: 0.1
     property bool flag
     property list<string> lyricList: Lyrics.lyrics
@@ -270,7 +272,8 @@ Item {
 
             text: modelData || ". . ."
             color: ListView.isCurrentItem ? Colours.palette.m3primary : mouse.containsMouse ? Colours.palette.m3onSurface : Colours.palette.m3outline
-            font: Tokens.font.body.medium
+            font: root.karaoke ? (ListView.isCurrentItem ? Tokens.font.headline.small : Tokens.font.title.small) : Tokens.font.body.medium
+            horizontalAlignment: root.karaoke ? Text.AlignHCenter : Text.AlignLeft
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
             layer.enabled: effectScale > 0

@@ -66,7 +66,7 @@ Item {
         Hyprland.refreshWorkspaces();
     }
 
-    implicitWidth: Tokens.sizes.dashboard.mediaTabWidth
+    implicitWidth: Tokens.sizes.dashboard.mediaTabWidth + 140
     implicitHeight: pad * 2 + cardHeight * rows + spacing * (rows - 1)
 
     // Window geometry only refreshes on open/close/move events, so poll while the tab is visible
@@ -109,15 +109,6 @@ Item {
                     anchors.fill: parent
                     radius: Tokens.rounding.small
                     color: card.focused ? Colours.layer(Colours.palette.m3surfaceContainerHighest, 2) : Colours.tPalette.m3surfaceContainer
-
-                    // Workspace number, faint behind the windows
-                    StyledText {
-                        anchors.centerIn: parent
-                        text: card.wsId
-                        color: Colours.palette.m3outlineVariant
-                        opacity: card.windows.length > 0 ? 0.25 : 0.7
-                        font: Tokens.font.headline.builders.large.build()
-                    }
 
                     // Highlight the workspace a dragged window would be dropped on
                     Rectangle {
@@ -230,20 +221,6 @@ Item {
             anchors.fill: parent
             captureSource: thumb.modelData.wayland ?? null // qmllint disable unresolved-type
             live: root.live
-        }
-
-        // App icon: centred while there is no frame, small in the corner once there is
-        IconImage {
-            readonly property real iconSize: Math.max(12, Math.min(thumb.width, thumb.height) * (preview.hasContent ? 0.28 : 0.5))
-
-            anchors.centerIn: preview.hasContent ? undefined : parent
-            anchors.right: preview.hasContent ? parent.right : undefined
-            anchors.bottom: preview.hasContent ? parent.bottom : undefined
-            anchors.margins: 2
-
-            implicitSize: Math.min(iconSize, 48)
-            asynchronous: true
-            source: Icons.getAppIcon(thumb.ipc.class ?? "", "image-missing")
         }
 
         // Drag a window onto another workspace card to move it there. The drop target is worked out

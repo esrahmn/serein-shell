@@ -75,6 +75,10 @@ Searcher {
             root.setWallpaper(path);
         }
 
+        function random(): void {
+            root.setRandom();
+        }
+
         function list(): string {
             return root.list.map(w => w.path).join("\n");
         }

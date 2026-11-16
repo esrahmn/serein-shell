@@ -8,6 +8,8 @@ PersistentProperties {
     property bool osd
     property bool session
     property bool launcher
+    // Text the launcher opens with (e.g. ">wallpaper " for the wallpaper picker)
+    property string launcherQuery
     property bool dashboard
     property bool utilities
     property bool sidebar

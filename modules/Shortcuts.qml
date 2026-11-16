@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Serein
+import Serein.Config
 import qs.components.misc
 import qs.services
 import qs.modules.nexus
@@ -72,6 +73,46 @@ Scope {
             }
             root.launcherInterrupted = false;
         }
+    }
+
+    // Wallpaper picker: the launcher opened on its wallpaper list
+    function toggleWallpaperPicker(): void {
+        if (root.hasFullscreen)
+            return;
+        const screenState = ShellState.forActive();
+        if (!screenState)
+            return;
+        const query = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+        if (screenState.launcher && screenState.launcherQuery === query) {
+            screenState.launcher = false;
+        } else {
+            screenState.launcherQuery = query;
+            screenState.launcher = true;
+        }
+    }
+
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "wallpaper"
+        description: "Toggle wallpaper picker"
+        onPressed: root.toggleWallpaperPicker()
+    }
+
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "wallpaperRandom"
+        description: "Random wallpaper"
+        onPressed: Wallpapers.setRandom()
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            root.toggleWallpaperPicker();
+        }
+
+        target: "wallpaperpicker"
     }
 
     // qmllint disable unresolved-type
@@ -149,6 +190,17 @@ Scope {
         }
 
         target: "controlcenter"
+    }
+
+    IpcHandler {
+        // 0 dashboard, 1 media, 2 performance, 3 weather, 4 workspaces
+        function tab(index: int): void {
+            const screenState = ShellState.forActive();
+            if (screenState)
+                screenState.dashboardTab = index;
+        }
+
+        target: "dashboard"
     }
 
     IpcHandler {

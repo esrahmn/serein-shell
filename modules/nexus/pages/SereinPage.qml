@@ -55,6 +55,29 @@ PageBase {
         }
     ]
 
+    readonly property list<MenuItem> transitionItems: [
+        MenuItem {
+            text: Tr.tr("Moon sweep")
+            icon: "dark_mode"
+            value: "moon"
+        },
+        MenuItem {
+            text: Tr.tr("Wave")
+            icon: "water_drop"
+            value: "wave"
+        },
+        MenuItem {
+            text: Tr.tr("Rain")
+            icon: "rainy"
+            value: "rain"
+        },
+        MenuItem {
+            text: Tr.tr("Fade")
+            icon: "opacity"
+            value: "fade"
+        }
+    ]
+
     ColumnLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
@@ -82,6 +105,20 @@ PageBase {
             subtext: Tr.tr("Thin Phosphor icons instead of Material Symbols")
             checked: UiPrefs.iconStyle === "phosphor"
             onToggled: UiPrefs.setIconStyle(checked ? "phosphor" : "material")
+        }
+
+        SectionHeader {
+            text: Tr.tr("Wallpaper")
+        }
+
+        SelectRow {
+            first: true
+            last: true
+            label: Tr.tr("Transition")
+            subtext: Tr.tr("How a new wallpaper replaces the old one")
+            menuItems: root.transitionItems
+            active: root.transitionItems.find(i => i.value === UiPrefs.wallpaperTransition)
+            onSelected: item => UiPrefs.setWallpaperTransition(item.value)
         }
 
         SectionHeader {

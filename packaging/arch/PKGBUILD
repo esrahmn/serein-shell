@@ -8,7 +8,7 @@
 # declared as conflicting (see conflicts= below).
 
 pkgname=serein-shell
-pkgver=0.1.2
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Quickshell desktop shell for Hyprland (fork of Caelestia): shell, native plugin and CLI'
 arch=('x86_64')

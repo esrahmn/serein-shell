@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.0
+
+**Dashboard**
+- Night sky hero on the Dashboard tab: moon phase, 24-hour clock, weather and your CPU, memory and disk as three
+  layered waves. Rain falls in it when it rains. Below it: this week, now playing (the cat sits on the card) and you.
+- Media tab redesigned: big centred (karaoke style) lyrics, the cover with the cava ring in the header, and a control
+  bar with a transport pill (play turns into a cookie while playing), wavy seek bar and Shuffle / Repeat chips.
+  Performance tab gets a "System load" wave header.
+- Weather tab redesigned: a night-sky scene with the sun (or moon) travelling along its arc and the moon phase, the
+  next hours as a temperature curve, and the week with temperature range bars.
+- New IPC: `dashboard tab <0-4>` switches the dashboard tab.
+
+**Wallpaper**
+- New wallpapers are revealed by a shape sweeping across instead of a plain fade: a big moon (default), a wave
+  front or slanted rain streaks. Pick one, or plain fade, in Nexus → Serein → Wallpaper.
+
+**Shortcuts**
+- Wallpaper picker: global shortcut `wallpaper` (or `qs -c serein ipc call wallpaperpicker toggle`) opens the
+  launcher on its wallpaper list. Bind it to Ctrl + Super + T.
+- Random wallpaper: global shortcut `wallpaperRandom` (Ctrl + Super + Alt + T) or `ipc call wallpaper random`.
+
 ## 0.1.2
 
 **Control center**

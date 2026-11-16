@@ -62,7 +62,7 @@ Click a workspace or a window to jump to it, or drag a window onto another works
 ### Arch Linux (one package)
 
 `packaging/arch/PKGBUILD` builds a single package, `serein-shell`, that contains the shell, `serein-plugin` and
-`serein-cli` (all taken from the `v0.1.1` tags, so they stay in step):
+`serein-cli` (all taken from the same version tag, so they stay in step):
 
 ```sh
 git clone https://github.com/esrahmn/serein-shell

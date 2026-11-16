@@ -1,3 +1,4 @@
+import "dash"
 import "performance"
 import QtQuick
 import QtQuick.Layouts
@@ -61,6 +62,81 @@ Item {
 
             Layout.fillWidth: true
             spacing: Tokens.spacing.medium
+
+            // System load as layered waves: CPU, memory and disk
+            StyledClippingRect {
+                Layout.fillWidth: true
+                implicitHeight: 132
+                radius: Tokens.rounding.extraLarge
+                color: Colours.tPalette.m3surfaceContainer
+
+                NightWaves {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    height: 78
+                }
+
+                Column {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.margins: Tokens.padding.largeIncreased
+
+                    StyledText {
+                        text: Tr.tr("System load")
+                        color: Colours.palette.m3onSurfaceVariant
+                        font: Tokens.font.label.small
+                    }
+
+                    StyledText {
+                        text: `${Math.round(Cpu.percentage * 100)}%`
+                        font: Tokens.font.headline.builders.medium.scale(1.3).weight(Font.Medium).build()
+                    }
+                }
+
+                Row {
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.margins: Tokens.padding.largeIncreased
+                    spacing: Tokens.spacing.small
+
+                    Repeater {
+                        model: [
+                            {
+                                label: "CPU",
+                                value: Cpu.percentage
+                            },
+                            {
+                                label: "RAM",
+                                value: Memory.percentage
+                            },
+                            {
+                                label: Tr.tr("Disk"),
+                                value: Storage.percentage
+                            }
+                        ]
+
+                        StyledRect {
+                            id: chip
+
+                            required property var modelData
+
+                            implicitWidth: chipLabel.implicitWidth + Tokens.padding.large * 2
+                            implicitHeight: chipLabel.implicitHeight + Tokens.padding.small * 2
+                            radius: Tokens.rounding.full
+                            color: Colours.layer(Colours.palette.m3surfaceContainerHighest, 2)
+
+                            StyledText {
+                                id: chipLabel
+
+                                anchors.centerIn: parent
+                                text: `${chip.modelData.label} ${Math.round(chip.modelData.value * 100)}%`
+                                font: Tokens.font.label.small
+                            }
+                        }
+                    }
+                }
+            }
 
             RowLayout {
                 spacing: Tokens.spacing.medium
