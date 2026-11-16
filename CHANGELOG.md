@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Performance tab redesigned: the System load wave header stays; CPU and GPU are big cards with a temperature chip and a
+  60-second history graph, and memory, storage, network speeds and the battery sit in one thin row below.
 - OSD: the volume and microphone sliders fill with a moving sine wave, and the brightness
   handle shows a moon whose phase follows the brightness.
 - New `scripts/restart`: restarts the shell, shows the errors if it does not load, and falls back to the last copy that

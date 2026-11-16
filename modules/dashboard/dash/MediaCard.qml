@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import M3Shapes
 import Serein.Components
 import Serein.Config
 import Serein.I18n
@@ -98,37 +99,87 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: cover.bottom
-        anchors.topMargin: Tokens.spacing.medium
+        anchors.topMargin: Tokens.spacing.small
         value: root.playerProgress
         running: Players.active?.isPlaying ?? false
     }
 
-    Row {
+    // Transport pill: previous, play (a cookie while playing) and next
+    StyledRect {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        spacing: Tokens.spacing.small
+        anchors.bottomMargin: -Tokens.spacing.small
+        implicitWidth: transport.implicitWidth + Tokens.padding.small * 2
+        implicitHeight: 40
+        radius: Tokens.rounding.full
+        color: Qt.alpha(Colours.palette.m3surfaceContainerHighest, 0.5)
 
-        IconButton {
-            type: IconButton.Text
-            icon: "skip_previous"
-            disabled: !Players.active?.canGoPrevious
-            onClicked: Players.active?.previous()
+        Row {
+            id: transport
+
+            anchors.centerIn: parent
+            spacing: Tokens.spacing.small
+
+            TransportButton {
+                icon: "skip_previous"
+                enabled: Players.active?.canGoPrevious ?? false
+                onClicked: Players.active?.previous()
+            }
+
+            MaterialShape {
+                anchors.verticalCenter: parent.verticalCenter
+                implicitSize: 32
+                shape: Players.active?.isPlaying ? MaterialShape.Cookie9Sided : MaterialShape.Circle
+                color: Colours.palette.m3primary
+                animationEasing: Tokens.anim.expressiveDefaultSpatial
+                animationDuration: Tokens.anim.durations.expressiveDefaultSpatial * Tokens.anim.durations.scale
+
+                MaterialIcon {
+                    anchors.centerIn: parent
+                    text: Players.active?.isPlaying ? "pause" : "play_arrow"
+                    fill: 1
+                    fontStyle: Tokens.font.icon.small
+                    color: Colours.palette.m3onPrimary
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: Players.active?.canTogglePlaying ?? false
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Players.active?.togglePlaying()
+                }
+            }
+
+            TransportButton {
+                icon: "skip_next"
+                enabled: Players.active?.canGoNext ?? false
+                onClicked: Players.active?.next()
+            }
+        }
+    }
+
+    component TransportButton: Item {
+        id: tb
+
+        property string icon
+
+        signal clicked
+
+        implicitWidth: 30
+        implicitHeight: 30
+        opacity: enabled ? 1 : 0.4
+
+        StateLayer {
+            radius: Tokens.rounding.full
+            onClicked: tb.clicked()
         }
 
-        IconButton {
-            icon: Players.active?.isPlaying ? "pause" : "play_arrow"
-            isRound: true
-            shapeMorph: true
-            checked: Players.active?.isPlaying ?? false
-            disabled: !Players.active?.canTogglePlaying
-            onClicked: Players.active?.togglePlaying()
-        }
-
-        IconButton {
-            type: IconButton.Text
-            icon: "skip_next"
-            disabled: !Players.active?.canGoNext
-            onClicked: Players.active?.next()
+        MaterialIcon {
+            anchors.centerIn: parent
+            text: tb.icon
+            fill: 1
+            fontStyle: Tokens.font.icon.medium
+            color: Colours.palette.m3onSurface
         }
     }
 }

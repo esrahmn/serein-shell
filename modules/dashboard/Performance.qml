@@ -12,7 +12,7 @@ import qs.services
 Item {
     id: root
 
-    implicitWidth: placeholder.active ? Tokens.sizes.dashboard.perfPlaceholderWidth : content.implicitWidth
+    implicitWidth: placeholder.active ? Tokens.sizes.dashboard.perfPlaceholderWidth : Tokens.sizes.dashboard.mediaTabWidth + 100
     implicitHeight: placeholder.active ? placeholder.implicitHeight + Tokens.padding.extraLarge * 2 : content.implicitHeight
 
     Loader {
@@ -66,7 +66,7 @@ Item {
             // System load as layered waves: CPU, memory and disk
             StyledClippingRect {
                 Layout.fillWidth: true
-                implicitHeight: 132
+                implicitHeight: 124
                 radius: Tokens.rounding.extraLarge
                 color: Colours.tPalette.m3surfaceContainer
 
@@ -74,13 +74,14 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    height: 78
+                    height: 46
                 }
 
                 Column {
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    anchors.margins: Tokens.padding.largeIncreased
+                    anchors.leftMargin: Tokens.padding.extraLargeIncreased
+                    anchors.topMargin: Tokens.padding.large
 
                     StyledText {
                         text: Tr.tr("System load")
@@ -90,14 +91,15 @@ Item {
 
                     StyledText {
                         text: `${Math.round(Cpu.percentage * 100)}%`
-                        font: Tokens.font.headline.builders.medium.scale(1.3).weight(Font.Medium).build()
+                        font: Tokens.font.headline.builders.medium.scale(1.15).weight(Font.Medium).build()
                     }
                 }
 
                 Row {
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    anchors.margins: Tokens.padding.largeIncreased
+                    anchors.rightMargin: Tokens.padding.extraLargeIncreased
+                    anchors.topMargin: Tokens.padding.large
                     spacing: Tokens.spacing.small
 
                     Repeater {
@@ -147,7 +149,7 @@ Item {
 
                     active: Config.dashboard.performance.showCpu
 
-                    sourceComponent: HeroCard {
+                    sourceComponent: BigCard {
                         icon: "memory"
                         label: Tr.tr("CPU")
                         subLabel: Cpu.name
@@ -166,7 +168,7 @@ Item {
 
                     active: Config.dashboard.performance.showGpu && Gpu.type !== GpuType.None
 
-                    sourceComponent: HeroCard {
+                    sourceComponent: BigCard {
                         icon: "desktop_windows"
                         label: Tr.tr("GPU")
                         subLabel: Gpu.name || (Gpu.detecting ? Tr.tr("Detecting GPU...") : Tr.trCtx("None", "GPU name"))
@@ -181,43 +183,15 @@ Item {
                 }
             }
 
-            RowLayout {
-                spacing: Tokens.spacing.medium
-                visible: storageCard.active || networkCard.active || memoryCard.active
-
-                WrappedLoader {
-                    id: storageCard
-
-                    active: Config.dashboard.performance.showStorage
-                    sourceComponent: StorageCard {}
-                }
-
-                WrappedLoader {
-                    id: networkCard
-
-                    active: Config.dashboard.performance.showNetwork
-                    sourceComponent: NetworkCard {}
-                }
-
-                WrappedLoader {
-                    id: memoryCard
-
-                    active: Config.dashboard.performance.showMemory
-                    sourceComponent: MemoryCard {}
-                }
+            SlimRow {
+                Layout.fillWidth: true
+                visible: Config.dashboard.performance.showMemory || Config.dashboard.performance.showStorage || Config.dashboard.performance.showNetwork || hasBattery
             }
-        }
-
-        WrappedLoader {
-            Layout.fillWidth: false
-            active: UPower.displayDevice.isLaptopBattery && Config.dashboard.performance.showBattery
-            sourceComponent: BatteryTank {}
         }
     }
 
     component WrappedLoader: Loader {
         Layout.fillWidth: true
-        Layout.fillHeight: true
         visible: active
     }
 }
