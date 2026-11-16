@@ -3,3 +3,7 @@
 /pkg/
 *.pkg.tar.*
 *.log
+# makepkg clones the sources next to the PKGBUILD
+/serein-shell/
+/serein-plugin/
+/serein-cli/
