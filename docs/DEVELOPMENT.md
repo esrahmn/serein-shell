@@ -41,7 +41,7 @@ rm ~/.config/quickshell/serein                          # back to the packaged s
 
 ```sh
 cd ~/src/serein-plugin
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.0 -DGIT_REVISION="$(git rev-parse HEAD)"
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.1 -DGIT_REVISION="$(git rev-parse HEAD)"
 cmake --build build
 cmake --install build --prefix ~/.local                  # modules go to ~/.local/lib/qt6/qml/Serein
 ```

@@ -51,7 +51,7 @@ settings app) and adds its own identity and a few features on top.
 ### Arch Linux (one package)
 
 `packaging/arch/PKGBUILD` builds a single package, `serein-shell`, that contains the shell, `serein-plugin` and
-`serein-cli` (all taken from the `v0.1.0` tags, so they stay in step):
+`serein-cli` (all taken from the `v0.1.1` tags, so they stay in step):
 
 ```sh
 git clone https://github.com/esrahmn/serein-shell
@@ -86,7 +86,7 @@ above.
    ```sh
    git clone https://github.com/esrahmn/serein-plugin ~/src/serein-plugin
    cd ~/src/serein-plugin
-   cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.0 -DGIT_REVISION="$(git rev-parse HEAD)"
+   cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.1 -DGIT_REVISION="$(git rev-parse HEAD)"
    cmake --build build
    cmake --install build --prefix ~/.local
    ```
