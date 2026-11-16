@@ -60,9 +60,24 @@ makepkg -si
 ```
 
 It installs the shell to `/etc/xdg/quickshell/serein`, the plugin to `/usr/lib/qt6/qml/Serein` and `serein` to
-`/usr/bin`, so no `QML_IMPORT_PATH` is needed. Start the shell with `qs -c serein`. (A copy in
-`~/.config/quickshell/serein` takes precedence over the packaged one.) `serein-shell` depends on
-`qt6-m3shapes-git` from the AUR.
+`/usr/bin`, so no `QML_IMPORT_PATH` is needed. Start the shell with `qs -c serein`. `serein-shell` depends on
+`qt6-m3shapes-git` from the AUR (and conflicts with the unrelated AUR package `serein`, which ships the same
+`/usr/bin/serein`).
+
+#### Where things live
+
+| What | Packaged install | Manual install |
+| --- | --- | --- |
+| Shell (QML) | `/etc/xdg/quickshell/serein` (system-wide, root-owned) | `~/.config/quickshell/serein` (yours to edit) |
+| Plugin (`Serein.*`) | `/usr/lib/qt6/qml/Serein` | `~/.local/lib/qt6/qml/Serein` (+ `QML_IMPORT_PATH`) |
+| CLI | `/usr/bin/serein` | wherever you linked it |
+| Your settings and state | `~/.config/serein`, `~/.local/state/serein`, `~/.local/share/serein`, `~/.cache/serein` | same |
+
+Quickshell looks for a config called `serein` in `~/.config/quickshell` first and only then in
+`/etc/xdg/quickshell`, so **a copy in `~/.config/quickshell/serein` always wins over the packaged one**. To hack
+on the QML, copy `/etc/xdg/quickshell/serein` (or clone this repository) there; to go back to the packaged
+shell, rename or remove that folder. Package updates never touch your settings, which live in the user folders
+above.
 
 ### By hand
 
@@ -103,6 +118,11 @@ sh ~/.config/quickshell/serein/scripts/migrate-from-caelestia.sh
 ```
 
 It only copies (never moves or deletes), so the Caelestia install keeps working.
+
+## Development
+
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for the three-repository layout, the dev loops (shell, plugin, CLI), how to
+tell which copy is running, and how to release.
 
 ## Keybinds
 
