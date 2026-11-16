@@ -173,7 +173,9 @@ Item {
         anchors.margins: Tokens.padding.extraLargeIncreased
 
         playing: Players.active?.isPlaying ?? false
-        speed: Audio.beatTracker.bpm / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
+        // The beat tracker reports 0 BPM until it has locked onto a beat (and for audio without a clear beat),
+        // which would freeze the animation, so fall back to 120 BPM and keep the speed in a sensible range.
+        speed: Math.max(80, Math.min(180, Audio.beatTracker.bpm || 120)) / Config.general.mediaGifSpeedAdjustment // qmllint disable unresolved-type
         source: Paths.absolutePath(Config.paths.mediaGif)
         asynchronous: true
         fillMode: AnimatedImage.PreserveAspectFit
