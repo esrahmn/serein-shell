@@ -12,6 +12,21 @@ settings app) and adds its own identity and a few features on top.
 
 ## Preview
 
+![Serein dashboard: a night sky with the moon phase, the clock, the weather and CPU, memory and disk as layered waves, with this week, now playing with the cat, and your profile below](docs/screenshots/dashboard.webp)
+
+*The dashboard: a night-sky hero with the real moon phase and the system load as three waves, and below it this
+week, now playing (the cat sits on the card) and you.*
+
+![Serein media tab: karaoke-style lyrics, the cover with a cava ring and a control bar with a wavy seek bar](docs/screenshots/media.webp)
+
+*The Media tab: big centred lyrics that follow the song, the cover with its cava ring, and a translucent control
+bar with a wavy seek bar and Shuffle / Repeat chips.*
+
+![Serein desktop with the translucent bar on top and terminals with blurred transparent backgrounds](docs/screenshots/desktop.webp)
+
+*The desktop: a bar that follows the panel (transparent when transparency is on), with the windows kept a little
+away from the frame.*
+
 ![Serein lock screen: fine rain over the blurred background, weather, sereinfetch, media card, clock, resources and notifications](docs/screenshots/lock.webp)
 
 *The lock screen, with the falling rain and the compact media card.*
