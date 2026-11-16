@@ -17,7 +17,7 @@ settings app) and adds its own identity and a few features on top.
 *The dashboard: a night-sky hero with the real moon phase and the system load as three waves, and below it this
 week, now playing (the cat sits on the card) and you.*
 
-![Serein media tab: karaoke-style lyrics, the cover with a cava ring and a control bar with a wavy seek bar](docs/screenshots/media.webp)
+![Serein media tab: karaoke-style lyrics, the cover with a cava ring and a control bar with a wavy seek bar](docs/screenshots/media-tab.webp)
 
 *The Media tab: big centred lyrics that follow the song, the cover with its cava ring, and a translucent control
 bar with a wavy seek bar and Shuffle / Repeat chips.*
