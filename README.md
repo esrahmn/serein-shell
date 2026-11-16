@@ -27,14 +27,10 @@ bar with a wavy seek bar and Shuffle / Repeat chips.*
 *The desktop: a bar that follows the panel (transparent when transparency is on), with the windows kept a little
 away from the frame.*
 
-![Serein lock screen: fine rain over the blurred background, weather, sereinfetch, media card, clock, resources and notifications](docs/screenshots/lock.webp)
+![Serein lock screen: weather, sereinfetch, media card, a big clock with your picture and the password field, the resources and notifications](docs/screenshots/lock.webp)
 
-*The lock screen, with the falling rain and the compact media card.*
-
-![Serein dashboard, Workspaces tab: a grid of workspaces with live previews of their windows, on a top bar](docs/screenshots/workspaces.webp)
-
-*The Workspaces tab of the dashboard (here with the bar on the top edge): live previews of every workspace.
-Click a workspace or a window to jump to it, or drag a window onto another workspace to move it.*
+*The lock screen: weather, sereinfetch and the compact media card on the left, the clock and your picture in the
+middle, resources and notifications on the right, over the blurred wallpaper.*
 
 ## What is different from Caelestia
 
