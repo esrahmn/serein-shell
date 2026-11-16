@@ -34,16 +34,27 @@ Item {
     implicitWidth: horizontal ? content.implicitWidth : content.implicitWidth * (1 - offsetScale)
     implicitHeight: horizontal ? content.implicitHeight * (1 - offsetScale) : content.implicitHeight
 
-    // Position across the bar edge hugs the bar; position along the bar follows the hovered icon
+    // True when the popout would run past the far end of the bar: it then sits against the screen border
+    readonly property bool pinnedToEnd: {
+        if (content.isDetached)
+            return false;
+        if (horizontal)
+            return parent.width - Math.floor(content.currentCenter - borderThickness - content.nonAnimWidth / 2 + content.nonAnimWidth) < 0;
+        return parent.height - Math.floor(content.currentCenter - borderThickness - content.nonAnimHeight / 2 + content.nonAnimHeight) < 0;
+    }
+
+    // Position across the bar edge hugs the bar; position along the bar follows the hovered icon.
+    // While pinned to the end, the far edge follows the (animated) size exactly, so the popout stays joined to the
+    // screen border while it grows or shrinks, instead of sliding on its own timing and coming loose.
     x: {
         if (horizontal) {
             if (content.isDetached)
                 return (parent.width - content.nonAnimWidth) / 2;
 
+            if (pinnedToEnd)
+                return parent.width - width;
+
             const off = content.currentCenter - borderThickness - content.nonAnimWidth / 2;
-            const diff = parent.width - Math.floor(off + content.nonAnimWidth);
-            if (diff < 0)
-                return off + diff;
             return Math.max(off, 0);
         }
         return (onRight ? parent.width - width : 0) + detachShift;
@@ -55,10 +66,10 @@ Item {
         if (content.isDetached)
             return (parent.height - content.nonAnimHeight) / 2;
 
+        if (pinnedToEnd)
+            return parent.height - height;
+
         const off = content.currentCenter - borderThickness - content.nonAnimHeight / 2;
-        const diff = parent.height - Math.floor(off + content.nonAnimHeight);
-        if (diff < 0)
-            return off + diff;
         return Math.max(off, 0);
     }
 
@@ -74,7 +85,7 @@ Item {
     }
 
     Behavior on x {
-        enabled: root.horizontal && root.offsetScale < 1
+        enabled: root.horizontal && root.offsetScale < 1 && !root.pinnedToEnd
 
         Anim {
             duration: content.animLength
@@ -83,7 +94,7 @@ Item {
     }
 
     Behavior on y {
-        enabled: !root.horizontal && root.offsetScale < 1
+        enabled: !root.horizontal && root.offsetScale < 1 && !root.pinnedToEnd
 
         Anim {
             duration: content.animLength

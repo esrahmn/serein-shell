@@ -173,8 +173,14 @@ Item {
         required property string name
         readonly property bool shouldBeActive: root.popouts.currentName === name
         property bool ready: true
+        // Another popout is still fading out: the new one waits a moment, so the old content is mostly gone (the panel is
+        // already resizing) before the new content appears
+        readonly property bool replacing: content.children.some(c => c !== popout && c.shouldBeActive === false && c.opacity > 0.02)
 
-        anchors.centerIn: parent
+        // Pinned to the top and centred across, not centred in both ways: when the panel changes size during a swap
+        // the content then does not slide up or down with it (it only ever differs from centred while swapping)
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
 
         opacity: 0
         active: false
@@ -197,7 +203,7 @@ Item {
                 SequentialAnimation {
                     Anim {
                         property: "opacity"
-                        type: Anim.DefaultEffects
+                        type: Anim.FastEffects
                     }
                     PropertyAction {
                         property: "active"
@@ -212,9 +218,12 @@ Item {
                     PropertyAction {
                         property: "active"
                     }
+                    PauseAnimation {
+                        duration: popout.replacing ? 90 : 0
+                    }
                     Anim {
                         property: "opacity"
-                        type: Anim.SlowEffects
+                        type: Anim.DefaultEffects
                     }
                 }
             }

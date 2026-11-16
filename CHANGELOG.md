@@ -12,6 +12,11 @@
   hover, the window title sits right below it, the clock is centred and the tray sits next to the status icons.
 - Fix: the control center showed "AC, No battery" on laptops (a property named `onBattery` clashed with QML's signal
   handler naming); it now shows the real level and charging time.
+- Fix: popouts now stay joined to the screen border while they grow or shrink when they sit at the far end of the bar
+  (switching between the control center and a tray menu used to let the panel come loose from the border).
+- Fix: switching between two popouts (e.g. control center and a tray menu) is smooth in both directions: the old content
+  fades out fast, the new one fades in a moment later, and the content stays pinned to the top of the panel instead of
+  sliding with it while the panel resizes.
 - Fix: `drawers list` / `isOpen` no longer fail when there is no active monitor.
 
 ## 0.2.0
