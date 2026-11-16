@@ -10,6 +10,12 @@ settings app) and adds its own identity and a few features on top.
 > Serein is a fork and is **not affiliated with** the Caelestia project. All credit for the original shell
 > goes to its authors; see [Credits and license](#credits-and-license).
 
+## Preview
+
+![Serein lock screen: fine rain over the blurred background, weather, sereinfetch, media card, clock, resources and notifications](docs/screenshots/lock.webp)
+
+*The lock screen, with the falling rain and the compact media card.*
+
 ## What is different from Caelestia
 
 - **Branding**: Serein name, logo (crescent moon and rain, drawn as vectors so it follows the theme colours),
