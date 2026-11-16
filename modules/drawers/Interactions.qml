@@ -4,6 +4,7 @@ import Quickshell
 import Serein.Config
 import qs.components
 import qs.components.controls
+import qs.services
 import qs.modules.bar as Bar
 import qs.modules.bar.popouts as BarPopouts
 
@@ -114,7 +115,7 @@ CustomMouseArea {
 
     onPressed: event => dragStart = Qt.point(event.x, event.y)
     onContainsMouseChanged: {
-        if (!containsMouse) {
+        if (!containsMouse && !ShellState.pickerActive) {
             // Only hide if not activated by shortcut
             if (!osdShortcutActive) {
                 screenState.osd = false;

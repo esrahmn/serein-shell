@@ -15,6 +15,8 @@ StyledRect {
     property color colour: Colours.palette.m3secondary
     readonly property alias items: iconColumn
 
+    signal clicked
+
     readonly property int spacing: Tokens.spacing.medium / 2
 
     // Index of the first/last entry that isn't collapsed, for edge margin gating
@@ -44,6 +46,13 @@ StyledRect {
     radius: Tokens.rounding.full
 
     clip: true
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.clicked()
+    }
+
     implicitWidth: Tokens.sizes.bar.innerWidth
     implicitHeight: iconColumn.implicitHeight + Tokens.padding.medium * 2
 

@@ -135,6 +135,22 @@ Scope {
         target: "drawers"
     }
 
+    // qmllint disable unresolved-type
+    CustomShortcut {
+        // qmllint enable unresolved-type
+        name: "controlcenter"
+        description: "Toggle control center"
+        onPressed: ShellState.componentsForActive()?.bar?.toggleControlCenter()
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            ShellState.componentsForActive()?.bar?.toggleControlCenter();
+        }
+
+        target: "controlcenter"
+    }
+
     IpcHandler {
         function open(): void {
             WindowFactory.create();

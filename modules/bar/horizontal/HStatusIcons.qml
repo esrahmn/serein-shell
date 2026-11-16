@@ -18,10 +18,19 @@ StyledRect {
     property color colour: Colours.palette.m3secondary
     readonly property alias items: iconRow
 
+    signal clicked
+
     color: Colours.tPalette.m3surfaceContainer
     radius: Tokens.rounding.full
 
     clip: true
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.clicked()
+    }
+
     implicitWidth: iconRow.implicitWidth + Tokens.padding.large * 2
     implicitHeight: Tokens.sizes.bar.innerWidth
 

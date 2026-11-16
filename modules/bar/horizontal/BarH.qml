@@ -31,8 +31,29 @@ RowLayout {
         }
     }
 
+    function toggleControlCenter(): void {
+        if (popouts.hasCurrent && popouts.currentName === "controlcenter") {
+            popouts.hasCurrent = false;
+            return;
+        }
+
+        for (let i = 0; i < repeater.count; i++) {
+            const entry = repeater.itemAt(i) as EntryWrapper;
+            if (entry?.entryId === "statusIcons") {
+                popouts.currentName = "controlcenter";
+                popouts.currentCenter = Qt.binding(() => entry.mapToItem(root, entry.width / 2, 0).x);
+                popouts.hasCurrent = true;
+                return;
+            }
+        }
+    }
+
     function checkPopout(x: real): void {
         const ch = childAt(x, height / 2) as EntryWrapper;
+
+        // Keep the control center open while the pointer stays on the bar
+        if (popouts.hasCurrent && popouts.currentName === "controlcenter")
+            return;
 
         if (ch?.entryId !== "tray")
             closeTray();
@@ -177,6 +198,7 @@ RowLayout {
                 delegate: EntryWrapper {
                     HStatusIcons {
                         objectName: "taskbarStatusIcons"
+                        onClicked: root.toggleControlCenter()
                     }
                 }
             }

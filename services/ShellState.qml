@@ -9,6 +9,10 @@ import qs.services
 Singleton {
     property ShellRoot shellRoot
 
+    // True while the screenshot area picker is open: its fullscreen overlay takes the pointer,
+    // which must not make the panels hide (they should end up in the screenshot).
+    property bool pickerActive
+
     function anySidebarOpen(): bool {
         return states.instances.some(s => s.sidebar);
     }

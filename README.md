@@ -29,6 +29,9 @@ Click a workspace or a window to jump to it, or drag a window onto another works
   separate horizontal layout (workspaces with window icons, clock, tray, status icons, active window).
 - **Workspaces tab in the dashboard**: a grid of workspaces with live window previews (screencopy). Click a
   workspace to switch to it, click a window to focus it, or drag a window onto another workspace to move it.
+- **Control center**: click the status icons in the bar (any edge) to open a card with brightness as a moon
+  phase (drag to set it), Wi-Fi / Bluetooth / Quiet tiles, a wavy volume slider, a battery drop and a power
+  mode switch. Also `qs -c serein ipc call controlcenter toggle` or the `controlcenter` global shortcut.
 - **Look**: a Serein colour scheme (night blue slate with an aqua-blue accent; `serein scheme set -n serein`) and a
   default wallpaper of a crescent moon and fine rain, both generated for this project.
 - **Lock screen**: falling rain over the blurred background, and a Media card that switches to a compact row
@@ -141,7 +144,7 @@ hl.bind("CTRL + ALT + Delete", hl.dsp.global("serein:session"), { description = 
 hl.bind("SUPER + SUPER_L", hl.dsp.exec_cmd("qs -c serein ipc call drawers toggle launcher"), { release = true })
 ```
 
-Available shortcuts: `nexus`, `showall`, `dashboard`, `session`, `launcher`, `launcherInterrupt`, `sidebar`,
+Available shortcuts: `nexus`, `controlcenter`, `showall`, `dashboard`, `session`, `launcher`, `launcherInterrupt`, `sidebar`,
 `utilities`, plus media, brightness and screenshot shortcuts. Run `qs -c serein ipc show` to list every IPC
 target (`drawers`, `lock`, `nexus`, `notifs`, `mpris`, `audio`, `wallpaper`, ...).
 

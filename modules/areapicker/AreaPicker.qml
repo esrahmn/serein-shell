@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -8,6 +9,12 @@ import qs.components.misc
 import qs.services
 
 Scope {
+    Binding {
+        target: ShellState
+        property: "pickerActive"
+        value: root.active
+    }
+
     LazyLoader {
         id: root
 

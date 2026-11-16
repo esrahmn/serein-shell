@@ -40,6 +40,10 @@ Item {
         content.item?.checkPopout(pos); // qmllint disable missing-property
     }
 
+    function toggleControlCenter(): void {
+        content.item?.toggleControlCenter(); // qmllint disable missing-property
+    }
+
     function handleWheel(pos: real, angleDelta: point): void {
         content.item?.handleWheel(pos, angleDelta); // qmllint disable missing-property
     }
