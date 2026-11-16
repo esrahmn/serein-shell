@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<path d="M 52.28 20.05 A 32 32 0 1 0 83.67 63.99 A 27 27 0 1 1 52.28 20.05 Z" fill="#fff"/>
+<g stroke="#6ae5e1" stroke-width="4" stroke-linecap="round" fill="none">
+<line x1="36" y1="96" x2="32" y2="110" opacity="1"/>
+<line x1="52" y1="93" x2="47" y2="112" opacity="1"/>
+<line x1="69" y1="98" x2="65" y2="111" opacity="0.85"/>
+<line x1="85" y1="91" x2="80" y2="107" opacity="0.7"/>
+<line x1="44" y1="117" x2="42" y2="122" opacity="0.5"/>
+<line x1="77" y1="115" x2="75" y2="121" opacity="0.5"/>
+<line x1="98" y1="99" x2="95" y2="108" opacity="0.45"/>
+</g>
+<circle cx="96" cy="26" r="3" fill="#6ae5e1" opacity="1"/>
+<circle cx="106" cy="42" r="1.8" fill="#6ae5e1" opacity="0.7"/>
+<circle cx="88" cy="46" r="1.4" fill="#6ae5e1" opacity="0.5"/>
+</svg>
