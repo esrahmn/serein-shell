@@ -4,7 +4,7 @@ Serein is three repositories that are released together (one tag, one version):
 
 | Repo | What it is | Where I keep it |
 | --- | --- | --- |
-| [serein-shell](https://github.com/esrahmn/serein-shell) | the shell itself (QML) | `~/src/serein-shell` |
+| [serein-shell](https://github.com/esrahmn/serein-shell) | the shell itself (QML) | `/etc/xdg/quickshell/serein` (see below) |
 | [serein-plugin](https://github.com/esrahmn/serein-plugin) | native Qt/QML modules (`Serein.*`), C++ | `~/src/serein-plugin` |
 | [serein-cli](https://github.com/esrahmn/serein-cli) | the `serein` command (Python) | `~/src/serein-cli` |
 
@@ -12,60 +12,58 @@ The Arch package `serein-shell` (see `packaging/arch/PKGBUILD`) builds all three
 
 ## Workflow at a glance
 
-The three repositories are the source of truth. `/etc/xdg/quickshell/serein` and `/usr` are only where they get
-deployed, and a release just repackages them.
+The repositories are the source of truth. For the shell, the working copy **is** the packaged location,
+`/etc/xdg/quickshell/serein`: it is a git checkout of serein-shell that you own (`sudo chown -R $USER
+/etc/xdg/quickshell/serein` once; the package files and the `.git` folder live side by side). Edits there are live
+as soon as the shell restarts, so there is no copy step, no symlink and no second shell running from another path.
 
 | You changed | Run | Takes effect |
 | --- | --- | --- |
-| Shell QML, assets | `scripts/serein-deploy`, then restart the shell | right away |
+| Shell QML, assets | restart the shell: `qs -c serein kill; qs -c serein -d` | right away |
 | CLI (Python) | nothing, once `~/.local/bin/serein` links to the checkout (see below) | right away |
 | Plugin (C++) | build, `cmake --install --prefix ~/.local`, set `QML_IMPORT_PATH` (see below) | after a rebuild |
 | Settings (bar position, rain, ...) | Nexus, or edit `serein-ui.json` | live |
 
-Day to day: edit in the repository, deploy, restart, `git commit` and `git push`. Anything that was only deployed
-and never committed is lost on the next package upgrade. When you want to ship or repackage, follow
-[Releasing](#releasing).
+Day to day: edit, restart, `git commit` and `git push` (from `/etc/xdg/quickshell/serein`). A package upgrade
+(`pacman -U`) rewrites the packaged files with the release contents, so commit and push before upgrading; after an
+upgrade `git status` shows any difference between the release and your branch. When you want to ship or repackage,
+follow [Releasing](#releasing).
 
-`scripts/serein-deploy -n` lists what a deploy would change without touching anything. If you own
-`/etc/xdg/quickshell/serein` (`sudo chown -R $USER /etc/xdg/quickshell/serein` once) the deploy needs no sudo;
-otherwise it asks for it and keeps root as the owner. It copies only files whose content differs.
+`scripts/serein-deploy` is only for a *separate* checkout: it copies that checkout onto the packaged shell (and
+`-n` lists what would change). Run from `/etc/xdg/quickshell/serein` itself it does nothing.
 
 ## Which copy is running?
 
-Quickshell looks for a config named `serein` in `~/.config/quickshell` first and in `/etc/xdg/quickshell` second,
-so a dev copy always beats the packaged one. Check with:
+Quickshell looks for a config named `serein` in `~/.config/quickshell` first and in `/etc/xdg/quickshell` second.
+Nothing is in the first place by default, so the packaged (and edited in place) copy runs. Check with:
 
 ```sh
 qs list --all        # "Config path:" shows the shell.qml in use
 ```
 
 Similarly, a plugin found through `QML_IMPORT_PATH` beats `/usr/lib/qt6/qml/Serein`, and `~/.local/bin` comes before
-`/usr/bin` in `PATH`. A fresh package install overrides nothing; the symlink and `QML_IMPORT_PATH` loops below each
-turn one override on, and `scripts/serein-deploy` instead rewrites the packaged shell in place. If something you edited
-does not show up, check which of these is active.
+`/usr/bin` in `PATH`. If something you edited does not show up, check which of these is in play.
 
 ## Shell (QML)
 
-The usual loop is to deploy the checkout onto the packaged shell:
+Edit the files in `/etc/xdg/quickshell/serein` and restart:
 
 ```sh
-scripts/serein-deploy                            # or put it on your PATH: ln -s $PWD/scripts/serein-deploy ~/.local/bin/
-qs -c serein kill; qs -c serein -d               # restart (config reload is off)
-```
-
-Alternatively run the checkout directly, without touching `/etc`; a dev copy beats the packaged one:
-
-```sh
-ln -s ~/src/serein-shell ~/.config/quickshell/serein    # use the working copy
-rm ~/.config/quickshell/serein                          # back to the packaged shell (removes the link only)
+qs -c serein kill; qs -c serein -d       # config reload is off, so a restart picks the edits up
 ```
 
 - Logs: `qs log -c serein`, or `/run/user/$UID/quickshell/by-id/<id>/log.log` (`qs list --all` shows the id).
 - IPC: `qs -c serein ipc show` lists targets, e.g. `qs -c serein ipc call drawers toggle dashboard`.
 - The bar position, lock rain and dashboard overview toggles are stored in `~/.local/state/serein/serein-ui.json`
   and are watched, so editing the file applies live.
-- Trying a change without touching the running shell: copy the tree somewhere and run
+- Do not run a second copy from another path (for example a symlink into `~/.config/quickshell`): Quickshell tells
+  instances apart by config path, so killing one leaves the other running and you end up with two shells.
+- To try a change without touching the running shell, copy the tree somewhere and run
   `qs -p /path/to/copy/shell.qml` (kill the real one first, two shells draw over each other).
+- To set the working copy up on a new machine: install the package, then
+  `sudo chown -R $USER /etc/xdg/quickshell/serein` and run in that folder `git init -b main`,
+  `git remote add origin https://github.com/esrahmn/serein-shell.git`, `git fetch origin main`,
+  `git reset --mixed origin/main`, `git ls-files -d | xargs -r -d '\n' git checkout --`.
 
 ## Plugin (C++)
 

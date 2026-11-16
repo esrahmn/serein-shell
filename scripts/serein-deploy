@@ -7,13 +7,20 @@
 #
 # If you own /etc/xdg/quickshell/serein the copy runs as you; otherwise it uses sudo and keeps root as the owner.
 # A package upgrade overwrites these files again, which is fine: the repository is the source of truth.
-# Set SEREIN_SRC to deploy a checkout other than the one this script lives in.
+# Set SEREIN_SRC to deploy a checkout other than the one this script lives in. When the checkout is
+# /etc/xdg/quickshell/serein itself (the working copy used day to day) there is nothing to copy.
 
 set -eu
 
 src="${SEREIN_SRC:-$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)}"
 dest=/etc/xdg/quickshell/serein
 files="assets components modules services utils shell.qml VERSION"
+
+if [ "$(cd "$src" && pwd -P)" = "$(cd "$dest" && pwd -P)" ]; then
+    echo "$src is the packaged shell itself: edits there are already live, nothing to deploy."
+    echo "restart the shell to pick them up: qs -c serein kill; qs -c serein -d"
+    exit 0
+fi
 
 if [ "${1:-}" = "-n" ]; then
     # shellcheck disable=SC2086
