@@ -24,6 +24,8 @@ settings app) and adds its own identity and a few features on top.
   separate horizontal layout (workspaces with window icons, clock, tray, status icons, active window).
 - **Workspaces tab in the dashboard**: a grid of workspaces with live window previews (screencopy). Click a
   workspace to switch to it, click a window to focus it, or drag a window onto another workspace to move it.
+- **Look**: a Serein colour scheme (night blue slate with an aqua-blue accent; `serein scheme set -n serein`) and a
+  default wallpaper of a crescent moon and fine rain, both generated for this project.
 - **Lock screen**: falling rain over the blurred background, and a Media card that switches to a compact row
   when the column is short.
 - **Window info panel**: clicking the active window title in the bar opens the detached window info panel

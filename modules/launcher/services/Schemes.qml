@@ -55,7 +55,9 @@ Searcher {
                     for (const f of s)
                         flat.push(f);
 
-                schemes.model = flat.sort((a, b) => String(a.name + a.flavour).localeCompare((b.name + b.flavour)));
+                // Serein's own scheme first, then the wallpaper-driven one, then the rest alphabetically
+                const rank = name => name === "serein" ? 0 : name === "dynamic" ? 1 : 2;
+                schemes.model = flat.sort((a, b) => rank(a.name) - rank(b.name) || String(a.name + a.flavour).localeCompare((b.name + b.flavour)));
             }
         }
     }
