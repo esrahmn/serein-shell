@@ -23,6 +23,13 @@ Singleton {
     // Dashboard tab with live workspace previews
     readonly property bool dashboardOverview: adapter.dashboardOverview
 
+    // Alpha of the bar and panel surface when transparency is on (0.3 to 1)
+    readonly property real surfaceOpacity: Math.max(0.3, Math.min(1, adapter.surfaceOpacity))
+
+    function setSurfaceOpacity(value: real): void {
+        adapter.surfaceOpacity = Math.max(0.3, Math.min(1, Math.round(value * 100) / 100));
+    }
+
     function setLockRain(enabled: bool): void {
         adapter.lockRain = enabled;
     }
@@ -50,6 +57,7 @@ Singleton {
             property string barPosition: "left"
             property bool lockRain: true
             property bool dashboardOverview: true
+            property real surfaceOpacity: 0.7
         }
     }
 }

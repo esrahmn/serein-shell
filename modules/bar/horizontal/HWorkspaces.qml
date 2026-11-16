@@ -54,7 +54,7 @@ StyledRect {
     implicitWidth: row.implicitWidth + pad * 2
     implicitHeight: Tokens.sizes.bar.innerWidth
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: "transparent"
     radius: Tokens.rounding.full
 
     opacity: onSpecial ? 0.5 : 1

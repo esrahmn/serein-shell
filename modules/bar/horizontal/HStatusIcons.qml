@@ -20,7 +20,7 @@ StyledRect {
 
     signal clicked
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: "transparent"
     radius: Tokens.rounding.full
 
     clip: true
