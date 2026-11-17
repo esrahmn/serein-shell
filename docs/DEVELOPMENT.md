@@ -69,7 +69,7 @@ qs -c serein kill; qs -c serein -d       # config reload is off, so a restart pi
 
 ```sh
 cd ~/src/serein-plugin
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.1 -DGIT_REVISION="$(git rev-parse HEAD)"
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.2.0 -DGIT_REVISION="$(git rev-parse HEAD)"
 cmake --build build
 cmake --install build --prefix ~/.local                  # modules go to ~/.local/lib/qt6/qml/Serein
 ```
@@ -101,7 +101,7 @@ Everything user-specific lives outside the repositories: `~/.config/serein` (`sh
 ## Releasing
 
 1. Commit and push all three repos (plugin: branch `serein`; the others: `main`).
-2. Bump `VERSION` in serein-shell and `pkgver` in `packaging/arch/PKGBUILD`.
+2. Bump `VERSION` in serein-shell, `pkgver` in `packaging/arch/PKGBUILD` and the `-DVERSION` example in `README.md` and this file.
 3. Tag the same version in all three: `git tag -a vX.Y.Z -m "..."` then `git push origin <branch> --tags`.
    Do not move a tag that has been published; make a new one.
 4. Build the package from a scratch copy of the PKGBUILD so the sources do not land in the repository:

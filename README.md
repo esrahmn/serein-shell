@@ -42,7 +42,7 @@ middle, resources and notifications on the right, over the blurred wallpaper.*
   workspace to switch to it, click a window to focus it, or drag a window onto another workspace to move it.
 - **Control center**: click the status icons in the bar (any edge) to open a card with brightness as a moon
   phase (drag to set it), Wi-Fi / Bluetooth / Quiet and Mic / Awake / Record tiles, a wavy volume slider, a
-  a battery drop and a power mode switch (right-click the Wi-Fi or Bluetooth tile for the lists). Also `qs -c serein ipc call controlcenter toggle` or the `controlcenter` global shortcut.
+  battery drop and a power mode switch (right-click the Wi-Fi or Bluetooth tile for the lists). Also `qs -c serein ipc call controlcenter toggle` or the `controlcenter` global shortcut.
 - **Line icons**: thin [Phosphor](https://phosphoricons.com) icons (MIT) instead of Material Symbols, switchable in
   Nexus (Wallpaper & style → Line icons). The shell still asks for icons by Material name; `assets/icons/` holds
   fonts with a ligature for every Material name that maps it to the matching Phosphor glyph.
@@ -108,7 +108,7 @@ above.
    ```sh
    git clone https://github.com/esrahmn/serein-plugin ~/src/serein-plugin
    cd ~/src/serein-plugin
-   cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.1.1 -DGIT_REVISION="$(git rev-parse HEAD)"
+   cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DVERSION=0.2.0 -DGIT_REVISION="$(git rev-parse HEAD)"
    cmake --build build
    cmake --install build --prefix ~/.local
    ```
@@ -129,17 +129,6 @@ above.
    To start it with Hyprland, run `qs -c serein` from your autostart (for example
    `hl.exec_cmd("qs -c serein")` in a Lua config). Do not run it at the same time as the stock Caelestia shell:
    they would draw over each other.
-
-### Coming from Caelestia
-
-Serein reads and writes `~/.config/serein`, `~/.local/state/serein`, `~/.local/share/serein` and `~/.cache/serein`.
-To bring your existing settings, colour scheme and wallpaper over, run once:
-
-```sh
-sh ~/.config/quickshell/serein/scripts/migrate-from-caelestia.sh
-```
-
-It only copies (never moves or deletes), so the Caelestia install keeps working.
 
 ## Development
 

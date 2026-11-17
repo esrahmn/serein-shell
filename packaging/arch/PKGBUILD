@@ -104,7 +104,6 @@ package() {
     install -m644 shell.qml VERSION "${dest}/"
     chmod 755 "${dest}/assets/wrap_term_launch.sh"
 
-    install -Dm755 scripts/migrate-from-caelestia.sh "${pkgdir}/usr/share/serein/migrate-from-caelestia.sh"
     install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
     install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
